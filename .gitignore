@@ -1,0 +1,5 @@
+*.o
+bin/
+lib/
+.vscode/
+*.exe
