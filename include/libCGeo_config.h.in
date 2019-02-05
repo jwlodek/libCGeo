@@ -1,0 +1,16 @@
+#ifndef LIBCGEO_CONFIG_H
+#define LIBCGEO_CONFIG_H
+
+#define LIBCGEO_VERSION_MAJOR @libCGeo_VERSION_MAJOR@
+#define LIBCGEO_VERSION_MINOR @libCGeo_VERSION_MINOR@
+#define LIBCGEO_VERSION_PATCH @libCGeo_VERSION_PATCH@
+#define LIBCGEO_VERSION_STR "@libCGeo_VERSION@"
+#define LIBCGEO_VERSION_INT                      \
+  ((@libCGeo_VERSION_MAJOR@ << 16) |             \
+   (@libCGeo_VERSION_MINOR@ << 8) |              \
+   (@libCGeo_VERSION_PATCH@))
+
+#define LIBCGEO_VERSION_GTE(major, minor, patch)                         \
+  (LIBCGEO_VERSION_INT >= (((major) << 16) | ((minor) << 8) | (patch)))
+
+#endif // !def(LIBCGEO_CONFIG_H)
