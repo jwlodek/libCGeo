@@ -1,0 +1,3 @@
+# - Config file for the libuvc package
+set(libCGeo_INCLUDE_DIRS "@CONF_INCLUDE_DIR@")
+set(libCGeo_LIBRARIES "@CONF_LIBRARY@")
