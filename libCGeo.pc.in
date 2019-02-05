@@ -1,0 +1,11 @@
+libdir=@CONF_LIBRARY_DIR@
+includedir=@CONF_INCLUDE_DIR@
+
+Name: libCGeo
+Description: @libCGeo_DESCRIPTION@
+URL: @libCGeo_URL@
+Version: @libCGeo_VERSION@
+Libs: -L${libdir} -lCGeo
+Libs.private:
+Cflags: -I${includedir}
+Requires:
