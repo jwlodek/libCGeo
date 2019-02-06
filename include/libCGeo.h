@@ -26,6 +26,7 @@
 /** 
  * Enum that specifies degree of precision.
  * libCGeo supports treating points with integer precision as well as floating point precision
+ * @ingroup pttypes
  */
 typedef enum CG_DTYP {
     CG_INT,   /**< Integer precision */
@@ -36,6 +37,7 @@ typedef enum CG_DTYP {
 /** 
  * Enum that specifies whether the point is in 2D or 3D space.
  * libCGeo supports 2D cartesian points and 3D points, though not all functions support both.
+ * @ingroup pttypes
  */
 typedef enum CG_DIMS {
     CG_2D,  /**< Two Dimensional coordinates */
@@ -45,6 +47,7 @@ typedef enum CG_DIMS {
 
 /**
  * Enum that specifies the type of turn between three points.
+ * @ingroup ptrels
  */
 typedef enum CG_TURN {
     CG_TURN_LEFT,   /**< Left turn */
@@ -55,12 +58,14 @@ typedef enum CG_TURN {
 
 /**
  * Enum that specifies the type of error encountered by libCGeo.
+ * @ingroup diagnostics
  */
 typedef enum CG_ERROR {
     CG_SUCCESS              = 0,    /**< Successful completion */
     CG_INVALID_TYPE         = -1,   /**< Invalid Point Type for operation */
     CG_INVALID_DIMS         = -2,   /**< Invalid dimensions for operation */
-    CG_POINTS_TOO_FEW       = -3,    /**< Not enough points in set to perform operation (Usually >3) */
+    CG_POINTS_TOO_FEW       = -3,   /**< Not enough points in set to perform operation (Usually >3) */
+    CG_INVALID_INPUT        = -4,   /**< Invalid or null input */
 } CGError_t;
 
 
@@ -99,22 +104,18 @@ typedef struct CG_PointSet {
 // Function Definitions - Common
 //----------------------------------------------------------------
 
-/**
- * Simple function for printing out values in point set
- * @param point_set Input set of points
- * @return The appropriate error code
- */
+
+//----------------------------------------------------------------
+// Function Definitions - Diagnostics
+//----------------------------------------------------------------
+
+void print_cg_error(CGError_t error, const char* function_name);
+
+CGError_t print_point_to_file(CGPoint_t* point, FILE* fp);
+
 CGError_t print_points(CGPointSet_t* point_set);
 
-
-/**
- * Simple function for printing out values in point set into a file
- * @param point_set Input set of points
- * @param fp File pointer of file in which to write
- * @return The appropriate error code
- */
 CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp);
-
 
 //----------------------------------------------------------------
 // Function Definitions - Graham-Scan
