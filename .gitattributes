@@ -1,0 +1,3 @@
+# Github was classifying .h header file as objective-C
+
+*.h linguist-language=C
