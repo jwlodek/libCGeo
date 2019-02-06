@@ -1,18 +1,18 @@
 cmake_minimum_required(VERSION 2.8)
 project(libCGeo)
 
-if (NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
     message(STATUS "Did not select build type, will build Release")
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
-endif ()
+endif()
 
-if (NOT CMAKE_BUILD_TARGET)
+if(NOT CMAKE_BUILD_TARGET)
     message(STATUS "No build target selected, will build both static and shared library")
     set(CMAKE_BUILD_TARGET "Both" CACHE STRING "" FORCE)
-endif ()
+endif()
 
 option(BUILD_EXAMPLES "Build example programs" OFF)
-optiion(BUILD_UTESTS "Build library unit tests" OFF)
+option(BUILD_UTESTS "Build library unit tests" OFF)
 
 set(libCGeo_VERSION_MAJOR 0)
 set(libCGeo_VERSION_MINOR 0)
@@ -20,7 +20,7 @@ set(libCGeo_VERSION_PATCH 0)
 set(libCGeo_VERSION ${libCGeo_VERSION_MAJOR}.${libCGeo_VERSION_MINOR}.${libCGeo_VERSION_PATCH})
 
 set(libCGeo_DESCRIPTION "A fast cross platform Computational Geometry Library written in C")
-set(libCGeo_URL "https://github.com/jwlodek/libCGeo)
+set(libCGeo_URL "https://github.com/jwlodek/libCGeo")
 
 
 include(GNUInstallDirs)
@@ -32,23 +32,23 @@ set(SOURCES src/libCGeo.c src/graham_scan.c)
 
 include_directories(${libCGeo_SOURCE_DIR}/include ${libCGeo_BINARY_DIR}/include)
 
-if (${CMAKE_BUILD_TARGET} MATCHES "Shared")
+if(${CMAKE_BUILD_TARGET} MATCHES "Shared")
     set(BUILD_CGEO_SHARED TRUE)
-elseif ($(CMAKE_BUILD_TARGET} MATCHES "Static")
+elseif(${CMAKE_BUILD_TARGET} MATCHES "Static")
     set(BUILD_CGEO_STATIC TRUE)
-elseif (${CMAKE_BUILD_TARGET} MATCHES "BOTH")
+elseif(${CMAKE_BUILD_TARGET} MATCHES "BOTH")
     set(BUILD_CGEO_SHARED TRUE)
     set(BUILD_CGEO_STATIC TRUE)
-else ()
+else()
     message(FATAL_ERROR "Invalid build type ${CMAKE_BUILD_TARGET}")
-endif ()
+endif()
 
-if (BUILD_CGEO_SHARED)
+if(BUILD_CGEO_SHARED)
     add_library(CGeo SHARED ${SOURCES})
     set_property(TARGET CGeo PROPERTY VERSION ${libCGeo_VERSION})
-    set_property(TARGET CGeo PROPERTY SOVERSION ${libCGeo_VERSION_MAJOR} )
+    set_property(TARGET CGeo PROPERTY SOVERSION ${libCGeo_VERSION_MAJOR})
     list(APPEND CGEO_TARGETS CGeo)
-endif ()
+endif()
 
 if(BUILD_CGEO_STATIC)
     add_library(CGeo_static STATIC ${SOURCES})
@@ -60,9 +60,8 @@ configure_file(include/libCGeo_config.h.in ${PROJECT_BINARY_DIR/include/libCGeo_
 
 foreach(target_name ${CGEO_TARGETS})
     set_target_properties(${target_name} PROPERTIES
-        PUBLIC_HEADER "include/libCGeo.h;${libCGeo_BINARY_DIR}/include/libCGeo_config.h)
+        PUBLIC_HEADER "include/libCGeo.h;${libCGeo_BINARY_DIR}/include/libCGeo_config.h")
 endforeach()
-
 
 
 if(BUILD_EXAMPLES)
@@ -91,16 +90,14 @@ install(TARGETS ${CGEO_TARGETS}
         EXPORT libCGeoTargets
         LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_LIBRARY_ARCHITECTURE}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_LIBRARY_ARCHITECTURE}"
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
-)
+        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include")
 
-export(TARGETS $(CGEO_TARGETS}
-    FILE "${PROJECT_BINARY_DIR}/libCGeoTargets.cmake")
+export(TARGETS $(CGEO_TARGETS} FILE "${PROJECT_BINARY_DIR}/libCGeoTargets.cmake")
 export(PACKAGE libCGeo)
 
 set(CONF_INCLUDE_DIR "${CMAKE_INSTALL_PREFIx}/include")
 set(CONF_LIBRARY_DIR "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_LIBRARY_ARCHITECTURE}")
-set(CONF_LIBRARY "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_LIBRARY_ARCHITECTURE}/${CMAKE_SHARED_LIBRARY_PREFIX}CGeo${CMAKE_SHARED_LIBRARY_SUFFIX}
+set(CONF_LIBRARY "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_LIBRARY_ARCHITECTURE}/${CMAKE_SHARED_LIBRARY_PREFIX}CGeo${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
 configure_file(libCGeoConfig.cmake.in ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/libCGeoConfig.cmake)
 
@@ -113,6 +110,6 @@ install(FILES
     "{$PROJECT_BINARY_DIR}/libCGeoConfigVersion.cmake"
     DESTINATION "${INSTALL_CMAKE_DIR}")
 
-install(EXPORT libCGeoTargets DESTINATION "${INSTALL_CMAKE_DIR})
+install(EXPORT libCGeoTargets DESTINATION "${INSTALL_CMAKE_DIR}")
 
-install(FILES "${PROJECT_BINARY_DIR}/libCGeo.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+install(FILES "${PROJECT_BINARY_DIR}/libCGeo.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
