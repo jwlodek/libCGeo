@@ -36,7 +36,7 @@ if(${CMAKE_BUILD_TARGET} MATCHES "Shared")
     set(BUILD_CGEO_SHARED TRUE)
 elseif(${CMAKE_BUILD_TARGET} MATCHES "Static")
     set(BUILD_CGEO_STATIC TRUE)
-elseif(${CMAKE_BUILD_TARGET} MATCHES "BOTH")
+elseif(${CMAKE_BUILD_TARGET} MATCHES "Both")
     set(BUILD_CGEO_SHARED TRUE)
     set(BUILD_CGEO_STATIC TRUE)
 else()
@@ -56,7 +56,7 @@ if(BUILD_CGEO_STATIC)
     list(APPEND CGEO_TARGETS CGeo_static)
 endif()
 
-configure_file(include/libCGeo_config.h.in ${PROJECT_BINARY_DIR/include/libCGeo_config.h @ONLY)
+configure_file(include/libCGeo_config.h.in ${PROJECT_BINARY_DIR}/include/libCGeo_config.h @ONLY)
 
 foreach(target_name ${CGEO_TARGETS})
     set_target_properties(${target_name} PROPERTIES
@@ -92,16 +92,16 @@ install(TARGETS ${CGEO_TARGETS}
         ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_LIBRARY_ARCHITECTURE}"
         PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include")
 
-export(TARGETS $(CGEO_TARGETS} FILE "${PROJECT_BINARY_DIR}/libCGeoTargets.cmake")
+export(TARGETS ${CGEO_TARGETS} FILE "${PROJECT_BINARY_DIR}/libCGeoTargets.cmake")
 export(PACKAGE libCGeo)
 
-set(CONF_INCLUDE_DIR "${CMAKE_INSTALL_PREFIx}/include")
+set(CONF_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 set(CONF_LIBRARY_DIR "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_LIBRARY_ARCHITECTURE}")
 set(CONF_LIBRARY "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_LIBRARY_ARCHITECTURE}/${CMAKE_SHARED_LIBRARY_PREFIX}CGeo${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
 configure_file(libCGeoConfig.cmake.in ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/libCGeoConfig.cmake)
 
-configure_file(libCGeoConfigVerion.cmake.in ${PROJECT_BINARY_DIR}/libCGeoConfigVersion.cmake @ONLY)
+configure_file(libCGeoConfigVersion.cmake.in ${PROJECT_BINARY_DIR}/libCGeoConfigVersion.cmake @ONLY)
 
 configure_file(libCGeo.pc.in ${PROJECT_BINARY_DIR}/libCGeo.pc @ONLY)
 
