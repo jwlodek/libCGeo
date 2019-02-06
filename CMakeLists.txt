@@ -11,7 +11,7 @@ if(NOT CMAKE_BUILD_TARGET)
     set(CMAKE_BUILD_TARGET "Both" CACHE STRING "" FORCE)
 endif()
 
-option(BUILD_EXAMPLES "Build example programs" OFF)
+option(BUILD_EXAMPLES "Build example programs" ON)
 option(BUILD_UTESTS "Build library unit tests" OFF)
 
 set(libCGeo_VERSION_MAJOR 0)
@@ -28,7 +28,7 @@ include(GNUInstallDirs)
 set(INSTALL_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/lib/cmake/libCGeo" CACHE PATH
     "Installation dir for CMake files")
 
-set(SOURCES src/libCGeo.c src/graham_scan.c)
+set(SOURCES src/libCGeo.c src/graham_scan.c src/diagnostics.c)
 
 include_directories(${libCGeo_SOURCE_DIR}/include ${libCGeo_BINARY_DIR}/include)
 
@@ -65,8 +65,8 @@ endforeach()
 
 
 if(BUILD_EXAMPLES)
-    add_executable(graham_scan_example src/example.c)
-    target_link_libraries(graha_scan_example CGeo)
+    add_executable(example example/diagnostics_example.c)
+    target_link_libraries(example CGeo)
 endif()
 
 
