@@ -72,9 +72,8 @@ typedef enum CG_ERROR {
 typedef struct CG_Point {
     double xcoord;          /**< Double x-coordinate */
     double ycoord;          /**< Double y-coordinate */
-    double zcoord;          /**< Double z-coordinate, only used in CG_3D */
     double sort_val;        /**< Double value used for sorting points */
-    char* srot_val_desc;    /**< Description of what measurement is stored in the sort_val */
+    char* sort_val_desc;    /**< Description of what measurement is stored in the sort_val */
     CGType_t type;          /**< Data type used by point, int or double */
 } CGPoint_t;
 

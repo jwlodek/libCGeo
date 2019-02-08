@@ -35,9 +35,6 @@ int main(int argc, char** argv){
     CGPoint_t p1;
     CGPoint_t p2;
     CGPoint_t p3;
-    p1.dims = CG_2D;
-    p2.dims = CG_2D;
-    p3.dims = CG_3D;
     p1.type = CG_INT;
     p2.type = CG_INT;
     p3.type = CG_FLOAT;
@@ -45,9 +42,8 @@ int main(int argc, char** argv){
     p1.ycoord = 0;
     p2.xcoord = 1;
     p2.ycoord = 3;
-    p3.xcoord = 0;
-    p3.ycoord = 5;
-    p3.zcoord = 10;
+    p3.xcoord = 0.1;
+    p3.ycoord = 5.4;
     CGPointSet_t ps;
     ps.num_points = 3;
     ps.points = malloc(ps.num_points*sizeof(CGPoint_t));
@@ -61,6 +57,6 @@ int main(int argc, char** argv){
     // this will print an invalid input error message
     print_points(NULL);
 
-    // this will print an invalid dims error message
-    print_cg_error(CG_INVALID_DIMS, "main");
+    // this will print an invalid type error message
+    print_cg_error(CG_INVALID_TYPE, "main");
 }
