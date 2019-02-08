@@ -28,6 +28,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "libCGeo.h"
 
 int main(int argc, char** argv){

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(libCGeo)
 
+set(CMAKE_BUILD_TARGET "Static")
+
 if(NOT CMAKE_BUILD_TYPE)
     message(STATUS "Did not select build type, will build Release")
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
@@ -25,7 +27,7 @@ set(libCGeo_URL "https://github.com/jwlodek/libCGeo")
 
 include(GNUInstallDirs)
 
-set(INSTALL_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/lib/cmake/libCGeo" CACHE PATH
+set(INSTALL_CMAKE_DIR "${libCGeo_SOURCE_DIR}/lib/cmake/libCGeo" CACHE PATH
     "Installation dir for CMake files")
 
 set(SOURCES src/libCGeo.c src/graham_scan.c src/diagnostics.c)

@@ -9,3 +9,5 @@ lib/
 *.exe
 
 build/
+.vs/
+*.json

@@ -29,6 +29,7 @@
 
 // includes
 #include <stdio.h>
+#include <stdlib.h>
 #include "libCGeo.h"
 
 
@@ -97,6 +98,8 @@ CGError_t print_point_to_file(CGPoint_t* point, FILE* fp){
         result = fprintf(fp, "2D, float, coords[x: %lf, y: %lf]\n", point->xcoord, point->ycoord);
     else if(point->type == CG_FLOAT && point->dims == CG_3D)
         result = fprintf(fp, "3D, float, coords[x: %lf, y: %lfm z: %lf]\n", point->xcoord, point->ycoord, point->zcoord);   
+	if (result != 0) return CG_INVALID_INPUT;
+	else return CG_SUCCESS;
 }
 
 
@@ -147,4 +150,5 @@ CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp){
             print_point_to_file(point_set->points+i, fp);
         }
     }
+	return status;
 }

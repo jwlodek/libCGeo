@@ -33,6 +33,7 @@
 // System level includes
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 // libCGeo includes
 #include "libCGeo.h"
@@ -48,7 +49,7 @@
 CGError_t point_set_from_file(CGPointSet_t* point_set, FILE* file, CGType_t type, CGDims_t dims){
     CGError_t status = CG_SUCCESS;
     const char* function_name = "point_set_from_file";
-
+    return status;
 }
 
 
