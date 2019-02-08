@@ -30,10 +30,6 @@
  * @breif Collection of functions that allow for generating point-sets
  */
 
-// System level includes
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
 // libCGeo includes
 #include "libCGeo.h"
@@ -46,7 +42,7 @@
  * @param dims Are the points in 2D or 3D space
  * @return Success if 
  */
-CGError_t point_set_from_file(CGPointSet_t* point_set, FILE* file, CGType_t type, CGDims_t dims){
+CGError_t point_set_from_file(CGPointSet_t* point_set, FILE* file, CGType_t type){
     CGError_t status = CG_SUCCESS;
     const char* function_name = "point_set_from_file";
     return status;
@@ -61,7 +57,7 @@ CGError_t point_set_from_file(CGPointSet_t* point_set, FILE* file, CGType_t type
  * @param dims Is the point in 2D or 3D space
  * @return Success if parsed correctly, otherwise INVALID INPUT error
  */
-CGError_t point_from_csv(CGPoint_t* point, char* csv_line, CGType_t type, CGDims_t dims){
+CGError_t point_from_csv(CGPoint_t* point, char* csv_line, CGType_t type){
     CGError_t status = CG_SUCCESS;
     const char* function_name = "point_from_csv";
     if(point == NULL || csv_line == NULL){
@@ -78,31 +74,20 @@ CGError_t point_from_csv(CGPoint_t* point, char* csv_line, CGType_t type, CGDims
         print_cg_error(status, function_name);
         return status;
     }
-    yval = srtok(NULL, delimeter);
+    yval = strtok(NULL, delimeter);
     if(yval == NULL){
         status = CG_INVALID_INPUT;
         print_cg_error(status, function_name);
         return status;
     }
-    if(dims == CG_3D){
-        zval = strtok(NULL, delimeter);
-        if(xval == NULL){
-            status = CG_INVALID_INPUT;
-            print_cg_error(status, function_name);
-            return status;
-        }
-    }
-    point->dims = dims;
     point->type = type;
     if(type == CG_INT){
         point->xcoord = atoi(xval);
         point->ycoord = atoi(yval);
-        if(dims == CG_3D) point->zcoord = atoi(zval);
     }
     else if(type == CG_FLOAT){
-        point->xcoord = strtod(xval);
-        point->ycoord = strtod(yval);
-        if(dims == CG_3D) point->zcoord = strtod(zval);
+        point->xcoord = atof(xval);
+        point->ycoord = atof(yval);
     }
     else{
         status = CG_INVALID_TYPE;

@@ -48,7 +48,6 @@ typedef struct CG_ERROR_MESSAGE {
 static const CGErrorMessage_t error_messages[] = {
     {CG_SUCCESS, "Success"},
     {CG_INVALID_TYPE  , "Invalid point type"},
-    {CG_INVALID_DIMS  , "Invalid point dimensions"},
     {CG_POINTS_TOO_FEW, "Not enough points"},
     {CG_INVALID_INPUT , "Invalid input"}
 };
@@ -90,14 +89,10 @@ void print_cg_error(CGError_t error, const char* function_name){
 CGError_t print_point_to_file(CGPoint_t* point, FILE* fp){
     const char* function_name = "print_point_to_file";
     int result;
-    if(point->type == CG_INT && point->dims == CG_2D)
-        result = fprintf(fp, "2D, int, coords[x: %d, y: %d]\n", (int) point->xcoord, (int) point->ycoord);
-    else if(point->type == CG_INT && point->dims == CG_3D)
-        result = fprintf(fp, "3D, int, coords[x: %d, y: %d, z: %d]\n", (int) point->xcoord, (int) point->ycoord, (int) point->zcoord);
-    else if(point->type == CG_FLOAT && point->dims == CG_2D)
-        result = fprintf(fp, "2D, float, coords[x: %lf, y: %lf]\n", point->xcoord, point->ycoord);
-    else if(point->type == CG_FLOAT && point->dims == CG_3D)
-        result = fprintf(fp, "3D, float, coords[x: %lf, y: %lfm z: %lf]\n", point->xcoord, point->ycoord, point->zcoord);   
+    if(point->type == CG_INT)
+        result = fprintf(fp, "int, coords[x: %d, y: %d]\n", (int) point->xcoord, (int) point->ycoord);
+    else if(point->type == CG_FLOAT)
+        result = fprintf(fp, "float, coords[x: %lf, y: %lf]\n", point->xcoord, point->ycoord);
 	if (result != 0) return CG_INVALID_INPUT;
 	else return CG_SUCCESS;
 }

@@ -16,6 +16,8 @@
 
 // include files
 #include <stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 
 //----------------------------------------------------------------
@@ -32,17 +34,6 @@ typedef enum CG_DTYP {
     CG_INT,   /**< Integer precision */
     CG_FLOAT  /**< Floating point precision */
 } CGType_t;
-
-
-/** 
- * Enum that specifies whether the point is in 2D or 3D space.
- * libCGeo supports 2D cartesian points and 3D points, though not all functions support both.
- * @ingroup pttypes
- */
-typedef enum CG_DIMS {
-    CG_2D,  /**< Two Dimensional coordinates */
-    CG_3D   /**< Three Dimensional coordinates */
-} CGDims_t;
 
 
 /**
@@ -63,9 +54,8 @@ typedef enum CG_TURN {
 typedef enum CG_ERROR {
     CG_SUCCESS              = 0,    /**< Successful completion */
     CG_INVALID_TYPE         = -1,   /**< Invalid Point Type for operation */
-    CG_INVALID_DIMS         = -2,   /**< Invalid dimensions for operation */
-    CG_POINTS_TOO_FEW       = -3,   /**< Not enough points in set to perform operation (Usually >3) */
-    CG_INVALID_INPUT        = -4,   /**< Invalid or null input */
+    CG_POINTS_TOO_FEW       = -2,   /**< Not enough points in set to perform operation (Usually >3) */
+    CG_INVALID_INPUT        = -3,   /**< Invalid or null input */
 } CGError_t;
 
 
@@ -85,7 +75,6 @@ typedef struct CG_Point {
     double zcoord;          /**< Double z-coordinate, only used in CG_3D */
     double sort_val;        /**< Double value used for sorting points */
     char* srot_val_desc;    /**< Description of what measurement is stored in the sort_val */
-    CGDims_t dims;          /**< Dimensions of point (does it use 2 or 3) */
     CGType_t type;          /**< Data type used by point, int or double */
 } CGPoint_t;
 

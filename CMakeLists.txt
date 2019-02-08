@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(libCGeo)
 
-set(CMAKE_BUILD_TARGET "Static")
+set(CMAKE_BUILD_TARGET "Both")
 
 if(NOT CMAKE_BUILD_TYPE)
     message(STATUS "Did not select build type, will build Release")
@@ -92,7 +92,7 @@ install(TARGETS ${CGEO_TARGETS}
         EXPORT libCGeoTargets
         LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_LIBRARY_ARCHITECTURE}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_LIBRARY_ARCHITECTURE}"
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include")
+        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include/libCGeo")
 
 export(TARGETS ${CGEO_TARGETS} FILE "${PROJECT_BINARY_DIR}/libCGeoTargets.cmake")
 export(PACKAGE libCGeo)
