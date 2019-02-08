@@ -147,3 +147,20 @@ CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp){
     }
 	return status;
 }
+
+
+//----------------------------------------------------------------
+// Generating and comparing point sets
+//----------------------------------------------------------------
+
+CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type, int num_points){
+    CGError_t status;
+    const char* function_name;
+    point_set->num_points = num_points;
+    point_set->points = malloc(point_set->num_points*sizeof(CGPoint_t));
+    int i;
+    for(i = 0; i < point_set->num_points; i++){
+        //Generate random points here
+        
+    }
+}
