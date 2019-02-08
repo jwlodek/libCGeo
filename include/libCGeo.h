@@ -1,12 +1,29 @@
+/********************************************************************************
+ * MIT License
+ * 
+ * Copyright (c) 2019 Jakub Wlodek
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *********************************************************************************/
 /**
  * This is the main header file for libCGeo. It contains all definitions of data structures used by all of the
  * library, in addition to all function definitions for the library.
- *
- * Author: Jakub Wlodek
- * Created on: 5-Feb-2019
- * Last modified: 5-Feb-2019
- *
- * Copyright (c): MIT 2019 Jakub Wlodek
  */
 
 
@@ -92,6 +109,15 @@ typedef struct CG_PointSet {
 // Function Definitions - Common
 //----------------------------------------------------------------
 
+CGError_t sort_points_in_set(CGPoint_t* points, int left_point, int right_point);
+
+CGError_t merge_halves(CGPoint_t* points, int left_point, int center_point, int right_point);
+
+double distance_between(CGPoint_t point_A, CGPoint_t point_B);
+
+CGPoint_t* find_lowest_point_in_set(CGPointSet_t* point_set);
+
+CGTurn_t find_turn_type(CGPoint_t point_A, CGPoint_t point_B, CGPoint_t point_C);
 
 //----------------------------------------------------------------
 // Function Definitions - Diagnostics
@@ -105,21 +131,28 @@ CGError_t print_points(CGPointSet_t* point_set);
 
 CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp);
 
+int compare_point_sets(CGPointSet_t* point_set_A, CGPointSet_t* point_set_B);
+
+CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type, int num_points);
+
 //----------------------------------------------------------------
 // Function Definitions - Graham-Scan
 //----------------------------------------------------------------
 
+CGError_t compute_point_angles(CGPointSet_t* point_set);
+
+CGError_t compute_graham_scan(CGPointSet_t* input_set, CGPointSet_t* output_set);
+
+CGError_t remove_gs_degeneracies(CGPointSet_t* input_set);
+
+//----------------------------------------------------------------
+// Function Definitions - Triangulation
+//----------------------------------------------------------------
 
 
 //----------------------------------------------------------------
-// Function Definitions - common
+// Function Definitions - Sweeping Line
 //----------------------------------------------------------------
-
-
-//----------------------------------------------------------------
-// Function Definitions - common
-//----------------------------------------------------------------
-
 
 
 
