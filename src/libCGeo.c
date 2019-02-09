@@ -34,6 +34,11 @@
 // libCGeo includes
 #include "libCGeo.h"
 
+
+//----------------------------------------------------------------
+// Functions - Reading from files
+//----------------------------------------------------------------
+
 /**
  * Function that reads point information from a comma separated values file.
  * @param point_set The point set into which the points will be written.
@@ -97,3 +102,64 @@ CGError_t point_from_csv(CGPoint_t* point, char* csv_line, CGType_t type){
 }
 
 
+/**
+ * Function that finds the turn made by three consecutive points.
+ * param point_A The first point out of the three.
+ * param point_B The center point out of the three.
+ * param point_C The last point out of the three.
+ * return Inline if points are colinear, otherwise left or right
+ */
+CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point_C){
+    int value = (point_B->ycoord - point_A->ycoord)*(point_C->xcoord - point_B->xcoord) -
+                (point_B->xcoord - point_A->xcoord)*(point_C->ycoord - point_B->ycoord);
+    if(value == 0) return CG_TURN_INLINE;
+    return (value > 0) ? CG_TURN_RIGHT : CG_TURN_LEFT;
+}
+
+
+/**
+ * Function that finds the minimum point by y-coordinate, and if there is a tie, it finds the min x-coordinate as well. 
+ * param point_set Point Set to search through
+ * return NULL if point set is NULL or empty, otherwise lowest point by y-coordinate
+ */
+CGPoint_t* find_lowest_point(CGPointSet_t* point_set){
+    if(point_set == NULL){
+        print_cg_error(CG_INVALID_INPUT, "find_lowest_point");
+        return NULL;
+    }
+    else if(point_set->num_points == 0){
+        print_cg_error(CG_INVALID_INPUT, "find_lowest_point");
+        return NULL;
+    }
+    CGPoint_t point = point_set->points[0];
+    int i;
+    for(i = 0; i < point_set->num_points; i++){
+        if(point_set->points[i].ycoord < point.ycoord){
+            point = point_set->points[i];
+        }
+        else if(point_set->points[i].ycoord == point.ycoord){
+            if(point_set->points[i].xcoord < point.xcoord){
+                point = point_set->points[i];
+            }
+        }
+    }
+    return &point;
+}
+
+
+/**
+ * Simple function that finds the distance between two points via the distance formula.
+ * param point_A First point.
+ * param point_B Second point.
+ * return Straight line distance between point_A and point_B, negative if invalid.
+ */
+double distance_between(CGPoint_t* point_A, CGPoint_t* point_B){
+    if(point_A == NULL || point_B == NULL){
+        print_cg_error(CG_INVALID_INPUT, "distance_between");
+        return -1;
+    }
+    double delta_x = point_A->xcoord - point_B->xcoord;
+    double delta_y = point_A->ycoord - point_B->ycoord;
+    double hypotenuse_squared = pow(delta_x, 2) + pow(delta_y, 2);
+    return pow(hypotenuse_squared, 0.5);
+}

@@ -1,13 +1,8 @@
 *.o
-
 bin/
-
 lib/
-
 .vscode/
-
 *.exe
-
 build/
 .vs/
 *.json
