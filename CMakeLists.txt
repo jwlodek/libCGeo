@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(libCGeo)
 
-set(CMAKE_BUILD_TARGET "Both")
+set(CMAKE_BUILD_TARGET "Shared")
 
 if(NOT CMAKE_BUILD_TYPE)
     message(STATUS "Did not select build type, will build Release")
@@ -14,7 +14,7 @@ if(NOT CMAKE_BUILD_TARGET)
 endif()
 
 option(BUILD_EXAMPLES "Build example programs" ON)
-option(BUILD_UTESTS "Build library unit tests" OFF)
+option(BUILD_UTESTS "Build library unit tests" ON)
 
 set(libCGeo_VERSION_MAJOR 0)
 set(libCGeo_VERSION_MINOR 0)
@@ -68,11 +68,12 @@ endforeach()
 
 if(BUILD_EXAMPLES)
     add_executable(example example/diagnostics_example.c)
-    target_link_libraries(example CGeo)
+    target_link_libraries(example m CGeo)
 endif()
 
+find_package(PkgConfig)
 
-if(BUILD_UTEST)
+if(BUILD_UTESTS)
     find_package(criterion QUIET)
     if(CRITERION_FOUND)
         set(CRITERION_LINK_FLAGS ${CRITERION_LIBRARIES})
@@ -85,8 +86,13 @@ if(BUILD_UTEST)
     endif()
 
     add_executable(CGeo_test test/libCGeo_tests.c)
-    target_link_libraries(CGeo_test CGeo criterion)
+    target_link_libraries(CGeo_test CGeo m criterion)
 endif()
+
+if(BUILD_CGEO_SHARED)
+    target_link_libraries(CGeo m)
+endif()
+
 
 install(TARGETS ${CGEO_TARGETS}
         EXPORT libCGeoTargets

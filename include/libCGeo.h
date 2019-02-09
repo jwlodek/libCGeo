@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <math.h>
 
 //----------------------------------------------------------------
 // Enums and Types
@@ -119,11 +119,11 @@ CGError_t sort_points_in_set(CGPoint_t* points, int left_point, int right_point)
 
 CGError_t merge_halves(CGPoint_t* points, int left_point, int center_point, int right_point);
 
-double distance_between(CGPoint_t point_A, CGPoint_t point_B);
+double distance_between(CGPoint_t* point_A, CGPoint_t* point_B);
 
 CGPoint_t* find_lowest_point_in_set(CGPointSet_t* point_set);
 
-CGTurn_t find_turn_type(CGPoint_t point_A, CGPoint_t point_B, CGPoint_t point_C);
+CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point_C);
 
 //----------------------------------------------------------------
 // Function Definitions - Diagnostics
