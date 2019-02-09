@@ -73,6 +73,7 @@ typedef enum CG_ERROR {
     CG_INVALID_TYPE         = -1,   /**< Invalid Point Type for operation */
     CG_POINTS_TOO_FEW       = -2,   /**< Not enough points in set to perform operation (Usually >3) */
     CG_INVALID_INPUT        = -3,   /**< Invalid or null input */
+    CG_NO_FILE              = -4,   /**< File pointer received by funciton is NULL */
 } CGError_t;
 
 
@@ -113,7 +114,7 @@ CGError_t free_points(CGPointSet_t* point_set);
 
 CGError_t point_set_from_csv_file(CGPointSet_t* point_set, int num_points, FILE* file, CGType_t type);
 
-CGError_t point_from_csv_line(CGPoint_t* point, char* csv_line, CGType_t type);
+CGError_t point_from_csv_line(CGPoint_t point, char* csv_line, CGType_t type);
 
 CGError_t sort_points_in_set(CGPoint_t* points, int left_point, int right_point);
 

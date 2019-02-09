@@ -30,7 +30,7 @@ include(GNUInstallDirs)
 set(INSTALL_CMAKE_DIR "${libCGeo_SOURCE_DIR}/lib/cmake/libCGeo" CACHE PATH
     "Installation dir for CMake files")
 
-set(SOURCES src/libCGeo.c src/graham_scan.c src/diagnostics.c)
+set(SOURCES src/libCGeo.c src/diagnostics.c)
 
 include_directories(${libCGeo_SOURCE_DIR}/include ${libCGeo_BINARY_DIR}/include)
 

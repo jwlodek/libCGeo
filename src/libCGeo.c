@@ -44,27 +44,30 @@
 
 /**
  * Function that reads point information from a comma separated values file.
- * @param point_set The point set into which the points will be written.
- * @param file file pointer to the .csv file
- * @param num_points The number of points to be read from the file.
- * @param type Type of points stored in file (int, float)
- * @param dims Are the points in 2D or 3D space.
- * @return Success if read without error, error if num_points invalid or point_set non-empty.
+ * param point_set The point set into which the points will be written.
+ * param file file pointer to the .csv file
+ * param num_points The number of points to be read from the file.
+ * param type Type of points stored in file (int, float)
+ * param dims Are the points in 2D or 3D space.
+ * return Success if read without error, error if num_points invalid or point_set non-empty.
  */
-CGError_t point_set_from_file(CGPointSet_t* point_set, int num_points, FILE* file, CGType_t type){
+CGError_t point_set_from_csv_file(CGPointSet_t* point_set, int num_points, FILE* file, CGType_t type){
     CGError_t status = CG_SUCCESS;
-    
+
     if(point_set == NULL)
         return CG_INVALID_INPUT;
     else if(point_set->num_points != 0)
         return CG_INVALID_INPUT;
+    else if(file == NULL)
+        return CG_NO_FILE;
 
     point_set->num_points = num_points;
     point_set->points = malloc(point_set->num_points * sizeof(CGPoint_t));
     char buffer[LINE_BUFFER];
     int counter = 0;
     while(fgets(buffer, LINE_BUFFER, file) != NULL){
-        status = point_from_csv_line(&point_set->points[counter], buffer, type);
+        printf("%s", buffer);
+        status = point_from_csv_line(point_set->points[counter], buffer, type);
         if(status != CG_SUCCESS) break;
     }
     if(status == CG_SUCCESS && counter != point_set->num_points - 1){
@@ -77,34 +80,35 @@ CGError_t point_set_from_file(CGPointSet_t* point_set, int num_points, FILE* fil
 
 /**
  * Function that parses a .csv line into a CGPoint.
- * @param point Pointer to the point into which the line is read. Cannot be NULL
- * @param csv_line Line read from .csv file
- * @param type Type of point (int, float)
- * @param dims Is the point in 2D or 3D space
- * @return Success if parsed correctly, otherwise INVALID INPUT error
+ * param point Pointer to the point into which the line is read. Cannot be NULL
+ * param csv_line Line read from .csv file
+ * param type Type of point (int, float)
+ * param dims Is the point in 2D or 3D space
+ * return Success if parsed correctly, otherwise INVALID INPUT error
  */
-CGError_t point_from_csv_line(CGPoint_t* point, char* csv_line, CGType_t type){
-    if(point == NULL || csv_line == NULL){
+CGError_t point_from_csv_line(CGPoint_t point, char* csv_line, CGType_t type){
+    if(csv_line == NULL)
         return CG_INVALID_INPUT;
-    }
     // because it is a .csv, we split on commas
-    char* delimeter, xval, yval, zval;
-    delimeter = ",";
-    xval = strtok(csv_line, delimeter);
+    char* xval = strtok(csv_line, ",");
+    printf("here");
     if(xval == NULL){
         return CG_INVALID_INPUT;
     }
-    yval = strtok(NULL, delimeter);
+    char* yval = strtok(NULL, "\0");
     if(yval == NULL) return CG_INVALID_INPUT;
     else{
-        point->type = type;
+        printf("%s\n", xval);
+        printf("%s\n", yval);
+        
+        point.type = type;
         if(type == CG_INT){
-            point->xcoord = atoi(xval);
-            point->ycoord = atoi(yval);
+            point.xcoord = atoi(xval);
+            point.ycoord = atoi(yval);
         }
         else if(type == CG_FLOAT){
-            point->xcoord = atof(xval);
-            point->ycoord = atof(yval);
+            point.xcoord = atof(xval);
+            point.ycoord = atof(yval);
         }
         else return CG_INVALID_TYPE;
     }

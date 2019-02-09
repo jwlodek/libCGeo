@@ -59,6 +59,5 @@ int main(int argc, char** argv){
 
     // this will print an invalid type error message
     print_cg_error(CG_INVALID_TYPE, "main");
-    
-    free(ps.points);
+    free_points(&ps);
 }

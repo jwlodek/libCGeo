@@ -30,4 +30,45 @@
 #include <criterion/assert.h>
 
 
+CGPointSet_t point_set_A;
+CGPointSet_t point_set_B;
+CGPointSet_t point_set_C;
+
+FILE* input_test_file;
+
+
+void setup_csv_parse(void){
+    input_test_file = fopen("../test/test_inputs/test1.csv", "r");
+}
+
+
+void setup_3_points(void){
+}
+
+void teardown_general(void){
+    free_points(&point_set_A);
+    free_points(&point_set_B);
+    free_points(&point_set_C);
+    if(input_test_file != NULL) fclose(input_test_file);
+}
+
+Test(asserts, input_parse_test, .init = setup_csv_parse, .fini = teardown_general){
+    point_set_A.num_points = 3;
+    point_set_A.points = malloc(point_set_A.num_points * sizeof(CGPoint_t));
+    point_set_A.points[0].xcoord = -3;
+    point_set_A.points[0].ycoord = 7;
+    point_set_A.points[1].xcoord = 5;
+    point_set_A.points[1].ycoord = 9;
+    point_set_A.points[2].xcoord = 4;
+    point_set_A.points[2].ycoord = 3;
+    int i;
+    for(i = 0; i< point_set_A.num_points; i++)
+        point_set_A.points[i].type = CG_INT;
+    CGError_t status = point_set_from_csv_file(&point_set_B, 3, input_test_file, CG_INT);
+    cr_assert(status == CG_SUCCESS, "Error in parsing csv file");
+    print_points(&point_set_A);
+    print_points(&point_set_B);
+}
+
+
 
