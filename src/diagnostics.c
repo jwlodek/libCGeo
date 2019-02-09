@@ -125,27 +125,21 @@ CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp){
     if(fp == NULL) fp = stderr;
 
     if(point_set == NULL){
-        status = CG_INVALID_INPUT;
-        print_cg_error(status, function_name);
-        return status;
+        return CG_INVALID_INPUT;
     }
     else if(point_set->points == NULL || point_set->num_points == 0){
-        status = CG_INVALID_INPUT;
-        print_cg_error(status, function_name);
-        return status;
+        return CG_INVALID_INPUT;
     }
     else{
         int i;
         for(i = 0; i < point_set->num_points; i++){
             if(point_set->points+i == NULL){
-                status = CG_INVALID_INPUT;
-                print_cg_error(status, function_name);
-                return status;
+                return CG_INVALID_INPUT;
             }
             print_point_to_file(point_set->points+i, fp);
         }
     }
-	return status;
+	return CG_SUCCESS;
 }
 
 

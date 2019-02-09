@@ -53,15 +53,12 @@
  */
 CGError_t point_set_from_file(CGPointSet_t* point_set, int num_points, FILE* file, CGType_t type){
     CGError_t status = CG_SUCCESS;
-    const char* function_name = "point_set_from_file";
-    if(point_set == NULL){
-        print_cg_error(CG_INVALID_INPUT, function_name);
+    
+    if(point_set == NULL)
         return CG_INVALID_INPUT;
-    }
-    else if(point_set->num_points != 0){
-        print_cg_error(CG_INVALID_INPUT, function_name);
+    else if(point_set->num_points != 0)
         return CG_INVALID_INPUT;
-    }
+
     point_set->num_points = num_points;
     point_set->points = malloc(point_set->num_points * sizeof(CGPoint_t));
     char buffer[LINE_BUFFER];
@@ -72,7 +69,6 @@ CGError_t point_set_from_file(CGPointSet_t* point_set, int num_points, FILE* fil
     }
     if(status == CG_SUCCESS && counter != point_set->num_points - 1){
         status = CG_INVALID_INPUT;
-        print_cg_error(status, function_name);
         free_points(point_set);
     }
     return status;
@@ -88,42 +84,31 @@ CGError_t point_set_from_file(CGPointSet_t* point_set, int num_points, FILE* fil
  * @return Success if parsed correctly, otherwise INVALID INPUT error
  */
 CGError_t point_from_csv_line(CGPoint_t* point, char* csv_line, CGType_t type){
-    CGError_t status = CG_SUCCESS;
-    const char* function_name = "point_from_csv";
     if(point == NULL || csv_line == NULL){
-        status = CG_INVALID_INPUT;
-        print_cg_error(status, function_name);
-        return status;
+        return CG_INVALID_INPUT;
     }
     // because it is a .csv, we split on commas
     char* delimeter, xval, yval, zval;
     delimeter = ",";
     xval = strtok(csv_line, delimeter);
     if(xval == NULL){
-        status = CG_INVALID_INPUT;
-        print_cg_error(status, function_name);
-        return status;
+        return CG_INVALID_INPUT;
     }
     yval = strtok(NULL, delimeter);
-    if(yval == NULL){
-        status = CG_INVALID_INPUT;
-        print_cg_error(status, function_name);
-        return status;
-    }
-    point->type = type;
-    if(type == CG_INT){
-        point->xcoord = atoi(xval);
-        point->ycoord = atoi(yval);
-    }
-    else if(type == CG_FLOAT){
-        point->xcoord = atof(xval);
-        point->ycoord = atof(yval);
-    }
+    if(yval == NULL) return CG_INVALID_INPUT;
     else{
-        status = CG_INVALID_TYPE;
-        print_cg_error(status, function_name);
+        point->type = type;
+        if(type == CG_INT){
+            point->xcoord = atoi(xval);
+            point->ycoord = atoi(yval);
+        }
+        else if(type == CG_FLOAT){
+            point->xcoord = atof(xval);
+            point->ycoord = atof(yval);
+        }
+        else return CG_INVALID_TYPE;
     }
-    return status;
+    return CG_SUCCESS;
 }
 
 
@@ -134,15 +119,12 @@ CGError_t point_from_csv_line(CGPoint_t* point, char* csv_line, CGType_t type){
  */
 CGError_t free_points(CGPointSet_t* point_set){
     CGError_t status = CG_SUCCESS;
-    const char* function_name = "free_points";
     if(point_set == NULL)
         status = CG_INVALID_INPUT;
     else if(point_set->points == NULL)
         status = CG_INVALID_INPUT;
     else
         free(point_set->points);
-    if(status != CG_SUCCESS)
-        print_cg_error(status, function_name);
     return status;
 }
 
@@ -168,14 +150,10 @@ CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point
  * return NULL if point set is NULL or empty, otherwise lowest point by y-coordinate
  */
 CGPoint_t* find_lowest_point(CGPointSet_t* point_set){
-    if(point_set == NULL){
-        print_cg_error(CG_INVALID_INPUT, "find_lowest_point");
+    if(point_set == NULL)
         return NULL;
-    }
-    else if(point_set->num_points == 0){
-        print_cg_error(CG_INVALID_INPUT, "find_lowest_point");
+    else if(point_set->num_points == 0)
         return NULL;
-    }
     CGPoint_t point = point_set->points[0];
     int i;
     for(i = 0; i < point_set->num_points; i++){
@@ -183,9 +161,7 @@ CGPoint_t* find_lowest_point(CGPointSet_t* point_set){
             point = point_set->points[i];
         }
         else if(point_set->points[i].ycoord == point.ycoord){
-            if(point_set->points[i].xcoord < point.xcoord){
-                point = point_set->points[i];
-            }
+            if(point_set->points[i].xcoord < point.xcoord) point = point_set->points[i];
         }
     }
     return &point;
@@ -200,7 +176,6 @@ CGPoint_t* find_lowest_point(CGPointSet_t* point_set){
  */
 double distance_between(CGPoint_t* point_A, CGPoint_t* point_B){
     if(point_A == NULL || point_B == NULL){
-        print_cg_error(CG_INVALID_INPUT, "distance_between");
         return -1;
     }
     double delta_x = point_A->xcoord - point_B->xcoord;
