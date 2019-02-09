@@ -35,6 +35,9 @@
 #include "libCGeo.h"
 
 
+#define LINE_BUFFER 40
+
+
 //----------------------------------------------------------------
 // Functions - Reading from files
 //----------------------------------------------------------------
@@ -43,13 +46,35 @@
  * Function that reads point information from a comma separated values file.
  * @param point_set The point set into which the points will be written.
  * @param file file pointer to the .csv file
+ * @param num_points The number of points to be read from the file.
  * @param type Type of points stored in file (int, float)
- * @param dims Are the points in 2D or 3D space
- * @return Success if 
+ * @param dims Are the points in 2D or 3D space.
+ * @return Success if read without error, error if num_points invalid or point_set non-empty.
  */
-CGError_t point_set_from_file(CGPointSet_t* point_set, FILE* file, CGType_t type){
+CGError_t point_set_from_file(CGPointSet_t* point_set, int num_points, FILE* file, CGType_t type){
     CGError_t status = CG_SUCCESS;
     const char* function_name = "point_set_from_file";
+    if(point_set == NULL){
+        print_cg_error(CG_INVALID_INPUT, function_name);
+        return CG_INVALID_INPUT;
+    }
+    else if(point_set->num_points != 0){
+        print_cg_error(CG_INVALID_INPUT, function_name);
+        return CG_INVALID_INPUT;
+    }
+    point_set->num_points = num_points;
+    point_set->points = malloc(point_set->num_points * sizeof(CGPoint_t));
+    char buffer[LINE_BUFFER];
+    int counter = 0;
+    while(fgets(buffer, LINE_BUFFER, file) != NULL){
+        status = point_from_csv_line(&point_set->points[counter], buffer, type);
+        if(status != CG_SUCCESS) break;
+    }
+    if(status == CG_SUCCESS && counter != point_set->num_points - 1){
+        status = CG_INVALID_INPUT;
+        print_cg_error(status, function_name);
+        free_points(point_set);
+    }
     return status;
 }
 
@@ -62,7 +87,7 @@ CGError_t point_set_from_file(CGPointSet_t* point_set, FILE* file, CGType_t type
  * @param dims Is the point in 2D or 3D space
  * @return Success if parsed correctly, otherwise INVALID INPUT error
  */
-CGError_t point_from_csv(CGPoint_t* point, char* csv_line, CGType_t type){
+CGError_t point_from_csv_line(CGPoint_t* point, char* csv_line, CGType_t type){
     CGError_t status = CG_SUCCESS;
     const char* function_name = "point_from_csv";
     if(point == NULL || csv_line == NULL){
@@ -98,6 +123,26 @@ CGError_t point_from_csv(CGPoint_t* point, char* csv_line, CGType_t type){
         status = CG_INVALID_TYPE;
         print_cg_error(status, function_name);
     }
+    return status;
+}
+
+
+/**
+ * Function that frees up memory allocated to point sets.
+ * param point_set Point set to be freed
+ * return Success if free succeeds, error if it is already NULL
+ */
+CGError_t free_points(CGPointSet_t* point_set){
+    CGError_t status = CG_SUCCESS;
+    const char* function_name = "free_points";
+    if(point_set == NULL)
+        status = CG_INVALID_INPUT;
+    else if(point_set->points == NULL)
+        status = CG_INVALID_INPUT;
+    else
+        free(point_set->points);
+    if(status != CG_SUCCESS)
+        print_cg_error(status, function_name);
     return status;
 }
 
