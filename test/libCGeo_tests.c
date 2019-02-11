@@ -62,7 +62,9 @@ Test(asserts, input_parse_test, .init = setup_3_points, .fini = teardown_general
     int i;
     for(i = 0; i< point_set_A->num_points; i++)
         point_set_A->points[i].type = CG_INT;
-    //CGError_t status = point_set_from_csv_file(point_set_B, input_test_file, CG_INT);
+    CGError_t status = point_set_from_csv_file(point_set_B, input_test_file, CG_INT);
+    if(status != CG_SUCCESS)
+        print_cg_error(status, "point_set_from_csv_file");
     //cr_assert(status == CG_SUCCESS, "Error in parsing csv file");
     print_points(point_set_A);
     print_points(point_set_B);

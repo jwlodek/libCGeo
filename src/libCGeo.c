@@ -42,6 +42,12 @@
 // Functions - Init and free point sets
 //----------------------------------------------------------------
 
+
+/**
+ * Function that initializes a point set with a set of empty points.
+ * param num_points The number of empty points to place in the set.
+ * return NULL if num_points is invalid, otherwise pointer to allocated point set.
+ */
 CGPointSet_t* init_point_set(int num_points){
     if(num_points <= 0){
         return NULL;
@@ -54,8 +60,16 @@ CGPointSet_t* init_point_set(int num_points){
     }
 }
 
+
+/**
+ * Function that frees memory allocated by init_point_set.
+ * param point_set Point set to free.
+ * return INVALID INPUT error if set isnt allocated, or SUCCESS otherwise.
+ */
 CGError_t free_point_set(CGPointSet_t* point_set){
     if(point_set == NULL)
+        return CG_INVALID_INPUT;
+    else if(point_set->points == NULL)
         return CG_INVALID_INPUT;
     else{
         free(point_set->points);
@@ -83,7 +97,7 @@ CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t 
 
     if(point_set == NULL)
         return CG_INVALID_INPUT;
-    else if(point_set->num_points != 0)
+    else if(point_set->points == NULL)
         return CG_INVALID_INPUT;
     else if(file == NULL)
         return CG_NO_FILE;
@@ -96,7 +110,8 @@ CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t 
         //if(status != CG_SUCCESS) break;
         counter++;
     }
-    if(status == CG_SUCCESS && counter != point_set->num_points - 1){
+    if(status == CG_SUCCESS && counter != point_set->num_points){
+        printf("%d\n", counter);
         status = CG_INVALID_INPUT;
     }
     return status;
