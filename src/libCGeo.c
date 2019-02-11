@@ -105,15 +105,13 @@ CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t 
     while(fgets(buffer, LINE_BUFFER, file) != NULL){
         if(counter == point_set->num_points)
             break;
-        printf("%s", buffer);
-        char* token = strtok(buffer, ",");
-        printf("X: %s\n", token);
+        char* token = (char*) strtok(buffer, ",");
+        point_set->points[counter].type = type;
         if(type = CG_INT)
             point_set->points[counter].xcoord = atoi(token);
         else
             point_set->points[counter].xcoord = atof(token);
-        token = strtok(NULL, "\n");
-        printf("Y: %s\n", token);
+        token = (char*) strtok(NULL, "\n");
         if(type = CG_INT)
             point_set->points[counter].ycoord = atoi(token);
         else
@@ -121,48 +119,12 @@ CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t 
 
         counter++;
     }
+    free(buffer);
     if(status == CG_SUCCESS && counter != point_set->num_points){
         printf("%d\n", counter);
         status = CG_INVALID_INPUT;
     }
     return status;
-}
-
-
-/**
- * Function that parses a .csv line into a CGPoint.
- * param point Pointer to the point into which the line is read. Cannot be NULL
- * param csv_line Line read from .csv file
- * param type Type of point (int, float)
- * param dims Is the point in 2D or 3D space
- * return Success if parsed correctly, otherwise INVALID INPUT error
- */
-CGError_t point_from_csv_line(CGPoint_t point, char* csv_line, CGType_t type){
-    if(csv_line == NULL)
-        return CG_INVALID_INPUT;
-    // because it is a .csv, we split on commas
-    char* xval = strtok(csv_line, ",");
-    printf("here");
-    if(xval == NULL){
-        return CG_INVALID_INPUT;
-    }
-    char* yval = strtok(NULL, "\0");
-    if(yval == NULL) return CG_INVALID_INPUT;
-    else{
-        printf("%s\n", xval);
-        printf("%s\n", yval);
-        point.type = type;
-        if(type == CG_INT){
-            point.xcoord = atoi(xval);
-            point.ycoord = atoi(yval);
-        }
-        else if(type == CG_FLOAT){
-            point.xcoord = atof(xval);
-            point.ycoord = atof(yval);
-        }
-        else return CG_INVALID_TYPE;
-    }
-    return CG_SUCCESS;
 }
 
 
@@ -191,17 +153,17 @@ CGPoint_t* find_lowest_point(CGPointSet_t* point_set){
         return NULL;
     else if(point_set->num_points == 0)
         return NULL;
-    CGPoint_t point = point_set->points[0];
+    CGPoint_t* point = &(point_set->points[0]);
     int i;
     for(i = 0; i < point_set->num_points; i++){
-        if(point_set->points[i].ycoord < point.ycoord){
-            point = point_set->points[i];
+        if(point_set->points[i].ycoord < point->ycoord){
+            point = &(point_set->points[i]);
         }
-        else if(point_set->points[i].ycoord == point.ycoord){
-            if(point_set->points[i].xcoord < point.xcoord) point = point_set->points[i];
+        else if(point_set->points[i].ycoord == point->ycoord){
+            if(point_set->points[i].xcoord < point->xcoord) point = &(point_set->points[i]);
         }
     }
-    return &point;
+    return point;
 }
 
 

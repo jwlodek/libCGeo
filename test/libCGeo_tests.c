@@ -52,6 +52,7 @@ void teardown_general(void){
 }
 
 
+/* Test for parsing from .csv file */
 Test(asserts, input_parse_test, .init = setup_3_points, .fini = teardown_general){
     point_set_A->points[0].xcoord = -3;
     point_set_A->points[0].ycoord = 7;
@@ -63,11 +64,20 @@ Test(asserts, input_parse_test, .init = setup_3_points, .fini = teardown_general
     for(i = 0; i< point_set_A->num_points; i++)
         point_set_A->points[i].type = CG_INT;
     CGError_t status = point_set_from_csv_file(point_set_B, input_test_file, CG_INT);
-    if(status != CG_SUCCESS)
-        print_cg_error(status, "point_set_from_csv_file");
-    //cr_assert(status == CG_SUCCESS, "Error in parsing csv file");
-    print_points(point_set_A);
-    print_points(point_set_B);
+    cr_assert(status == CG_SUCCESS, "Error in parsing csv file");
+    int compare = compare_point_sets(point_set_A, point_set_B);
+    cr_assert(compare == 0, "Parsed point set not as expected");
+}
+
+
+/* Test for finding turn type between points */
+Test(asserts, turn_type_test, .init = setup_3_points, .fini = teardown_general){
+    CGError_t status = point_set_from_csv_file(point_set_A, input_test_file, CG_INT);
+    cr_assert(status == CG_SUCCESS, "Error in parsing csv file");
+    CGTurn_t turn = find_turn_type(&(point_set_A->points[0]), &(point_set_A->points[1]), &(point_set_A->points[2]));
+    cr_assert(turn == CG_TURN_RIGHT, "Right Turn not found correctly");
+    turn = find_turn_type(&(point_set_A->points[2]), &(point_set_A->points[1]), &(point_set_A->points[0]));
+    cr_assert(turn == CG_TURN_LEFT, "Left Turn not found correctly");
 }
 
 

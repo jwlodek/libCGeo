@@ -159,3 +159,29 @@ CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type, int 
         
     }
 }
+
+
+/**
+ * Function that compares the contents of two point sets.
+ * param point_set_A First point set to compare.
+ * param point_set_B Second point set to compare.
+ * return 0 if they are the same, -1 if they are not.
+ */
+int compare_point_sets(CGPointSet_t* point_set_A, CGPointSet_t* point_set_B){
+    if(point_set_A == NULL || point_set_B == NULL)
+        return -1;
+    else{
+        if(point_set_A->num_points != point_set_B->num_points)
+            return -1;
+        int i;
+        for(i = 0; i < point_set_A->num_points; i++){
+            if(point_set_A->points[i].xcoord != point_set_B->points[i].xcoord)
+                return -1;
+            if(point_set_A->points[i].ycoord != point_set_B->points[i].ycoord)
+                return -1;
+            if(point_set_A->points[i].type != point_set_B->points[i].type)
+                return -1;
+        }
+        return 0;
+    }
+}

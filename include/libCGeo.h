@@ -116,7 +116,6 @@ CGError_t free_point_set(CGPointSet_t* point_set);
 
 // reading .csv files
 CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t type);
-CGError_t point_from_csv_line(CGPoint_t point, char* csv_line, CGType_t type);
 
 // sorting points (uses merge-sort)
 CGError_t sort_points_in_set(CGPoint_t* points, int left_point, int right_point);
