@@ -35,7 +35,7 @@
 #include "libCGeo.h"
 
 
-#define LINE_BUFFER 40
+#define LINE_BUFFER 256
 
 
 //----------------------------------------------------------------
@@ -87,9 +87,7 @@ CGError_t free_point_set(CGPointSet_t* point_set){
  * Function that reads point information from a comma separated values file.
  * param point_set The point set into which the points will be written.
  * param file file pointer to the .csv file
- * param num_points The number of points to be read from the file.
  * param type Type of points stored in file (int, float)
- * param dims Are the points in 2D or 3D space.
  * return Success if read without error, error if num_points invalid or point_set non-empty.
  */
 CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t type){
@@ -102,12 +100,25 @@ CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t 
     else if(file == NULL)
         return CG_NO_FILE;
 
-    char buffer[LINE_BUFFER];
+    char* buffer = (char*) calloc(1, LINE_BUFFER);
     int counter = 0;
     while(fgets(buffer, LINE_BUFFER, file) != NULL){
+        if(counter == point_set->num_points)
+            break;
         printf("%s", buffer);
-        //status = point_from_csv_line(point_set->points[counter], buffer, type);
-        //if(status != CG_SUCCESS) break;
+        char* token = strtok(buffer, ",");
+        printf("X: %s\n", token);
+        if(type = CG_INT)
+            point_set->points[counter].xcoord = atoi(token);
+        else
+            point_set->points[counter].xcoord = atof(token);
+        token = strtok(NULL, "\n");
+        printf("Y: %s\n", token);
+        if(type = CG_INT)
+            point_set->points[counter].ycoord = atoi(token);
+        else
+            point_set->points[counter].ycoord = atof(token);
+
         counter++;
     }
     if(status == CG_SUCCESS && counter != point_set->num_points){

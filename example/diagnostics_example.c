@@ -51,7 +51,6 @@ int main(int argc, char** argv){
     ps.points[1] = p2;
     ps.points[2] = p3;
 
-    // this will print the information stored in the above points to stdout
     print_points(&ps);
 
     // this will print an invalid input error message
