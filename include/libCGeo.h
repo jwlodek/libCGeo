@@ -142,6 +142,7 @@ CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp);
 
 // point set comparisons
 int compare_point_sets(CGPointSet_t* point_set_A, CGPointSet_t* point_set_B);
+int compare_points(CGPoint_t* point_A, CGPoint_t* point_B);
 
 // random point generation for testing
 CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type, int num_points);

@@ -161,6 +161,17 @@ CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type, int 
 }
 
 
+int compare_points(CGPoint_t* point_A, CGPoint_t* point_B){
+    if(point_A->xcoord != point_B->xcoord)
+        return -1;
+    else if(point_A->ycoord != point_B->ycoord)
+        return -1;
+    else if(point_A->type != point_B->type)
+        return -1;
+    else
+        return 0;
+}
+
 /**
  * Function that compares the contents of two point sets.
  * param point_set_A First point set to compare.
@@ -175,11 +186,7 @@ int compare_point_sets(CGPointSet_t* point_set_A, CGPointSet_t* point_set_B){
             return -1;
         int i;
         for(i = 0; i < point_set_A->num_points; i++){
-            if(point_set_A->points[i].xcoord != point_set_B->points[i].xcoord)
-                return -1;
-            if(point_set_A->points[i].ycoord != point_set_B->points[i].ycoord)
-                return -1;
-            if(point_set_A->points[i].type != point_set_B->points[i].type)
+            if(compare_points(&(point_set_A->points[i]), &(point_set_B->points[i])) != 0)
                 return -1;
         }
         return 0;

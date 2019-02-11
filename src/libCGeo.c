@@ -148,7 +148,7 @@ CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point
  * param point_set Point Set to search through
  * return NULL if point set is NULL or empty, otherwise lowest point by y-coordinate
  */
-CGPoint_t* find_lowest_point(CGPointSet_t* point_set){
+CGPoint_t* find_lowest_point_in_set(CGPointSet_t* point_set){
     if(point_set == NULL)
         return NULL;
     else if(point_set->num_points == 0)

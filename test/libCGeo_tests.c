@@ -81,4 +81,16 @@ Test(asserts, turn_type_test, .init = setup_3_points, .fini = teardown_general){
 }
 
 
+/* Test for finding lowest point in set */
+Test(asserts, lowest_point_test, .init = setup_3_points, .fini = teardown_general){
+    CGError_t status = point_set_from_csv_file(point_set_A, input_test_file, CG_INT);
+    cr_assert(status == CG_SUCCESS, "Error in parsing csv file");
+    CGPoint_t* temp = (CGPoint_t*) calloc(1, sizeof(CGPoint_t));
+    temp->type = CG_INT;
+    temp->xcoord = 4;
+    temp->ycoord = 3;
+    CGPoint_t* point = find_lowest_point_in_set(point_set_A);
+    int compare = compare_points(point, temp);
+    cr_assert(compare == 0, "Lowest point not found successfully");
+}
 
