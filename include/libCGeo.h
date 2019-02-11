@@ -110,36 +110,41 @@ typedef struct CG_PointSet {
 // Function Definitions - Common
 //----------------------------------------------------------------
 
-CGError_t free_points(CGPointSet_t* point_set);
+// Init and free point sets
+CGPointSet_t* init_point_set(int num_points);
+CGError_t free_point_set(CGPointSet_t* point_set);
 
-CGError_t point_set_from_csv_file(CGPointSet_t* point_set, int num_points, FILE* file, CGType_t type);
-
+// reading .csv files
+CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t type);
 CGError_t point_from_csv_line(CGPoint_t point, char* csv_line, CGType_t type);
 
+// sorting points (uses merge-sort)
 CGError_t sort_points_in_set(CGPoint_t* points, int left_point, int right_point);
-
 CGError_t merge_halves(CGPoint_t* points, int left_point, int center_point, int right_point);
 
+// Point operations and calculations
 double distance_between(CGPoint_t* point_A, CGPoint_t* point_B);
-
 CGPoint_t* find_lowest_point_in_set(CGPointSet_t* point_set);
 
+// Other calculations
 CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point_C);
 
 //----------------------------------------------------------------
 // Function Definitions - Diagnostics
 //----------------------------------------------------------------
 
+// error printing
 void print_cg_error(CGError_t error, const char* function_name);
 
+// point printing
 CGError_t print_point_to_file(CGPoint_t* point, FILE* fp);
-
 CGError_t print_points(CGPointSet_t* point_set);
-
 CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp);
 
+// point set comparisons
 int compare_point_sets(CGPointSet_t* point_set_A, CGPointSet_t* point_set_B);
 
+// random point generation for testing
 CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type, int num_points);
 
 //----------------------------------------------------------------
@@ -147,9 +152,7 @@ CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type, int 
 //----------------------------------------------------------------
 
 CGError_t compute_point_angles(CGPointSet_t* point_set);
-
 CGError_t compute_graham_scan(CGPointSet_t* input_set, CGPointSet_t* output_set);
-
 CGError_t remove_gs_degeneracies(CGPointSet_t* input_set);
 
 //----------------------------------------------------------------

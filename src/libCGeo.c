@@ -39,6 +39,33 @@
 
 
 //----------------------------------------------------------------
+// Functions - Init and free point sets
+//----------------------------------------------------------------
+
+CGPointSet_t* init_point_set(int num_points){
+    if(num_points <= 0){
+        return NULL;
+    }
+    else{
+        CGPointSet_t* point_set = (CGPointSet_t*) calloc(1, sizeof(CGPointSet_t));
+        point_set->num_points = num_points;
+        point_set->points = (CGPoint_t*) calloc(1, point_set->num_points * sizeof(CGPoint_t));
+        return point_set;
+    }
+}
+
+CGError_t free_point_set(CGPointSet_t* point_set){
+    if(point_set == NULL)
+        return CG_INVALID_INPUT;
+    else{
+        free(point_set->points);
+        free(point_set);
+        return CG_SUCCESS;
+    }
+}
+
+
+//----------------------------------------------------------------
 // Functions - Reading from files
 //----------------------------------------------------------------
 
@@ -51,7 +78,7 @@
  * param dims Are the points in 2D or 3D space.
  * return Success if read without error, error if num_points invalid or point_set non-empty.
  */
-CGError_t point_set_from_csv_file(CGPointSet_t* point_set, int num_points, FILE* file, CGType_t type){
+CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t type){
     CGError_t status = CG_SUCCESS;
 
     if(point_set == NULL)
@@ -61,18 +88,16 @@ CGError_t point_set_from_csv_file(CGPointSet_t* point_set, int num_points, FILE*
     else if(file == NULL)
         return CG_NO_FILE;
 
-    point_set->num_points = num_points;
-    point_set->points = malloc(point_set->num_points * sizeof(CGPoint_t));
     char buffer[LINE_BUFFER];
     int counter = 0;
     while(fgets(buffer, LINE_BUFFER, file) != NULL){
         printf("%s", buffer);
-        status = point_from_csv_line(point_set->points[counter], buffer, type);
-        if(status != CG_SUCCESS) break;
+        //status = point_from_csv_line(point_set->points[counter], buffer, type);
+        //if(status != CG_SUCCESS) break;
+        counter++;
     }
     if(status == CG_SUCCESS && counter != point_set->num_points - 1){
         status = CG_INVALID_INPUT;
-        free_points(point_set);
     }
     return status;
 }
@@ -100,7 +125,6 @@ CGError_t point_from_csv_line(CGPoint_t point, char* csv_line, CGType_t type){
     else{
         printf("%s\n", xval);
         printf("%s\n", yval);
-        
         point.type = type;
         if(type == CG_INT){
             point.xcoord = atoi(xval);
@@ -113,23 +137,6 @@ CGError_t point_from_csv_line(CGPoint_t point, char* csv_line, CGType_t type){
         else return CG_INVALID_TYPE;
     }
     return CG_SUCCESS;
-}
-
-
-/**
- * Function that frees up memory allocated to point sets.
- * param point_set Point set to be freed
- * return Success if free succeeds, error if it is already NULL
- */
-CGError_t free_points(CGPointSet_t* point_set){
-    CGError_t status = CG_SUCCESS;
-    if(point_set == NULL)
-        status = CG_INVALID_INPUT;
-    else if(point_set->points == NULL)
-        status = CG_INVALID_INPUT;
-    else
-        free(point_set->points);
-    return status;
 }
 
 

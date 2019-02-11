@@ -44,7 +44,7 @@ int main(int argc, char** argv){
     p2.ycoord = 3;
     p3.xcoord = 0.1;
     p3.ycoord = 5.4;
-    CGPointSet_t ps;
+    CGPointSet_t ps = *((CGPointSet_t*) malloc(sizeof(CGPointSet_t)));
     ps.num_points = 3;
     ps.points = malloc(ps.num_points*sizeof(CGPoint_t));
     ps.points[0] = p1;
@@ -59,5 +59,5 @@ int main(int argc, char** argv){
 
     // this will print an invalid type error message
     print_cg_error(CG_INVALID_TYPE, "main");
-    free_points(&ps);
+    free_point_set(&ps);
 }
