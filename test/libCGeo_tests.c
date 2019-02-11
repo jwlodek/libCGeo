@@ -92,5 +92,6 @@ Test(asserts, lowest_point_test, .init = setup_3_points, .fini = teardown_genera
     CGPoint_t* point = find_lowest_point_in_set(point_set_A);
     int compare = compare_points(point, temp);
     cr_assert(compare == 0, "Lowest point not found successfully");
+    free(temp);
 }
 
