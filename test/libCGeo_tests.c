@@ -100,7 +100,7 @@ Test(asserts, lowest_point_test, .init = setup_3_points, .fini = teardown_genera
 Test(asserts, distance_between_points, .init = setup_3_points, .fini = teardown_general){
     CGError_t status = point_set_from_csv_file(point_set_A, input_test_file, CG_INT);
     cr_assert(status == CG_SUCCESS, "Error in parsing csv file");
-    double expected_distance = 0;
+    double expected_distance = 8.246211;
     double calculated_distance = distance_between(&(point_set_A->points[0]), &(point_set_A->points[1]));
-    cr_assert(expected_distance == calculated_distance, "Distance between points not found correctly");
+    cr_assert((expected_distance - calculated_distance) < 0.000001, "Distance between points not found correctly");
 }
