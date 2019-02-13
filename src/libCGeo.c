@@ -107,15 +107,15 @@ CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t 
             break;
         char* token = (char*) strtok(buffer, ",");
         point_set->points[counter].type = type;
-        if(type = CG_INT)
-            point_set->points[counter].xcoord = atoi(token);
+        if(type == CG_INT)
+            point_set->points[counter].xcoord = (int) strtod(token, NULL);
         else
-            point_set->points[counter].xcoord = atof(token);
+            point_set->points[counter].xcoord = (int) strtod(token, NULL);
         token = (char*) strtok(NULL, "\n");
-        if(type = CG_INT)
-            point_set->points[counter].ycoord = atoi(token);
+        if(type == CG_INT)
+            point_set->points[counter].ycoord = strtod(token, NULL);
         else
-            point_set->points[counter].ycoord = atof(token);
+            point_set->points[counter].ycoord = strtod(token, NULL);
 
         counter++;
     }
