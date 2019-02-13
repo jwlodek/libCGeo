@@ -166,8 +166,8 @@ CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type){
     int i;
     for(i = 0; i < point_set->num_points; i++){
         if(type == CG_INT){
-            point_set->points[i].xcoord = (int) = 0;
-            point_set->points[i].ycoord = (int) = 0;
+            point_set->points[i].xcoord = (int) 0;
+            point_set->points[i].ycoord = (int) 0;
         }
         else{
             point_set->points[i].xcoord = 0;
