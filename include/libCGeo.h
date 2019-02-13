@@ -74,6 +74,7 @@ typedef enum CG_ERROR {
     CG_POINTS_TOO_FEW       = -2,   /**< Not enough points in set to perform operation (Usually >3) */
     CG_INVALID_INPUT        = -3,   /**< Invalid or null input */
     CG_NO_FILE              = -4,   /**< File pointer received by funciton is NULL */
+    CG_UNIMPLEMENTED        = -5,   /**< Function is not yet implemented */
 } CGError_t;
 
 

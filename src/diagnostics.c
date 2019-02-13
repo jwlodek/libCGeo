@@ -50,7 +50,9 @@ static const CGErrorMessage_t error_messages[] = {
     {CG_SUCCESS, "Success"},
     {CG_INVALID_TYPE  , "Invalid point type"},
     {CG_POINTS_TOO_FEW, "Not enough points"},
-    {CG_INVALID_INPUT , "Invalid input"}
+    {CG_INVALID_INPUT , "Invalid input"},
+    {CG_NO_FILE, "File cannot be opened, or does not exist"},
+    {CG_UNIMPLEMENTED, "Function has not yet been implemented"}
 };
 
 
@@ -148,19 +150,42 @@ CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp){
 // Generating and comparing point sets
 //----------------------------------------------------------------
 
-CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type, int num_points){
-    CGError_t status;
-    const char* function_name;
-    point_set->num_points = num_points;
-    point_set->points = malloc(point_set->num_points*sizeof(CGPoint_t));
+
+/**
+ * Function used to generate random point sets for testing purposes.
+ * @ingroup diag
+ * @param point_set Initialized, but empty point set which will be filled with random data.
+ * @param type Type of points to be written into the point set
+ * @return INVALID_INPUT if point set is uninitialized or empty, otherwise SUCCESS.
+ */
+CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type){
+    if(point_set == NULL)
+        return CG_INVALID_INPUT;
+    else if(point_set->num_points == 0 || point_set->points == NULL)
+        return CG_INVALID_INPUT;
     int i;
     for(i = 0; i < point_set->num_points; i++){
-        //Generate random points here
-        
+        if(type == CG_INT){
+            point_set->points[i].xcoord = (int) = 0;
+            point_set->points[i].ycoord = (int) = 0;
+        }
+        else{
+            point_set->points[i].xcoord = 0;
+            point_set->points[i].ycoord = 0;
+        }
+        point_set->points[i].type = type;
     }
+    return CG_UNIMPLEMENTED;
 }
 
 
+/**
+ * Function for comparing two points.
+ * @ingroup diag
+ * @param point_A First point to compare
+ * @param point_B Second point to compare
+ * @return 0 if the two points are the same, otherwise -1
+ */
 int compare_points(CGPoint_t* point_A, CGPoint_t* point_B){
     if(point_A->xcoord != point_B->xcoord)
         return -1;
@@ -171,6 +196,7 @@ int compare_points(CGPoint_t* point_A, CGPoint_t* point_B){
     else
         return 0;
 }
+
 
 /**
  * Function that compares the contents of two point sets.
