@@ -29,7 +29,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "libCGeo.h"
+#include "libCGeo/libCGeo.h"
 
 int main(int argc, char** argv){
     CGPoint_t p1;

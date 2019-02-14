@@ -58,11 +58,11 @@ if(BUILD_CGEO_STATIC)
     list(APPEND CGEO_TARGETS CGeo_static)
 endif()
 
-configure_file(include/libCGeo_config.h.in ${PROJECT_BINARY_DIR}/include/libCGeo_config.h @ONLY)
+configure_file(include/libCGeo/libCGeo_config.h.in ${PROJECT_BINARY_DIR}/include/libCGeo/libCGeo_config.h @ONLY)
 
 foreach(target_name ${CGEO_TARGETS})
     set_target_properties(${target_name} PROPERTIES
-        PUBLIC_HEADER "include/libCGeo.h;${libCGeo_BINARY_DIR}/include/libCGeo_config.h")
+        PUBLIC_HEADER "include/libCGeo/libCGeo.h;${libCGeo_BINARY_DIR}/include/libCGeo/libCGeo_config.h")
 endforeach()
 
 

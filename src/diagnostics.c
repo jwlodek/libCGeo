@@ -31,7 +31,7 @@
 // includes
 #include <stdio.h>
 #include <stdlib.h>
-#include "libCGeo.h"
+#include "libCGeo/libCGeo.h"
 
 
 //----------------------------------------------------------------

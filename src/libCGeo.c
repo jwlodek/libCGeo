@@ -32,7 +32,7 @@
 
 
 // libCGeo includes
-#include "libCGeo.h"
+#include "libCGeo/libCGeo.h"
 
 
 #define LINE_BUFFER 256

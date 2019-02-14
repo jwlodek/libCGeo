@@ -25,7 +25,7 @@
  * Unit tests for the common functionality for libCGeo used by multiple modules.
  */
 
-#include "libCGeo.h"
+#include "libCGeo/libCGeo.h"
 #include <criterion/criterion.h>
 #include <criterion/assert.h>
 
