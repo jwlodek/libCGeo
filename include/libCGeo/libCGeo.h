@@ -125,6 +125,7 @@ CGError_t merge_halves(CGPoint_t* points, int left_point, int center_point, int 
 // Point operations and calculations
 double distance_between(CGPoint_t* point_A, CGPoint_t* point_B);
 CGPoint_t* find_lowest_point_in_set(CGPointSet_t* point_set);
+double angle_between(CGPoint_t* initial_point, CGPoint_t* end_point);
 
 // Other calculations
 CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point_C);

@@ -29,6 +29,7 @@
  * @breif Functions and data types for finding Graham Scan convex hull
  */
 
+#include "libCGeo/libCGeo.h"
 
 /**
  * Function that computes the angle of each point with the lowest point in the set.

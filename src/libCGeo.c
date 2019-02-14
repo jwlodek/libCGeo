@@ -22,18 +22,16 @@
  * SOFTWARE.
  *********************************************************************************/
 /**
- * @defgroup pttypes Point Types
- * @breif Managing point types
- * @defgroup ptrels Point Relationships
- * @breif Calculating relationships between Points
- * @defgroup input Inputs
- * @breif Collection of functions that allow for generating point-sets
+ * @defgroup pttypes Point and Point Sets
+ * @breif Initialize point sets, point and point set Data Structures.
+ * @defgroup file File parsing and writing
+ * @defgroup ptmat Math functions computed using points.
+ * @breif Calculations between points (distance, angle, etc.)
  */
 
 
 // libCGeo includes
 #include "libCGeo/libCGeo.h"
-
 
 #define LINE_BUFFER 256
 
@@ -45,8 +43,9 @@
 
 /**
  * Function that initializes a point set with a set of empty points.
- * param num_points The number of empty points to place in the set.
- * return NULL if num_points is invalid, otherwise pointer to allocated point set.
+ * @ingroup pttypes
+ * @param num_points The number of empty points to place in the set.
+ * @return NULL if num_points is invalid, otherwise pointer to allocated point set.
  */
 CGPointSet_t* init_point_set(int num_points){
     if(num_points <= 0){
@@ -63,8 +62,9 @@ CGPointSet_t* init_point_set(int num_points){
 
 /**
  * Function that frees memory allocated by init_point_set.
- * param point_set Point set to free.
- * return INVALID INPUT error if set isnt allocated, or SUCCESS otherwise.
+ * @ingroup pttypes
+ * @param point_set Point set to free.
+ * @return INVALID INPUT error if set isnt allocated, or SUCCESS otherwise.
  */
 CGError_t free_point_set(CGPointSet_t* point_set){
     if(point_set == NULL)
@@ -80,15 +80,17 @@ CGError_t free_point_set(CGPointSet_t* point_set){
 
 
 //----------------------------------------------------------------
-// Functions - Reading from files
+// Functions - Reading from and writing to files
 //----------------------------------------------------------------
+
 
 /**
  * Function that reads point information from a comma separated values file.
- * param point_set The point set into which the points will be written.
- * param file file pointer to the .csv file
- * param type Type of points stored in file (int, float)
- * return Success if read without error, error if num_points invalid or point_set non-empty.
+ * @ingroup file
+ * @param point_set The point set into which the points will be written.
+ * @param file file pointer to the .csv file
+ * @param type Type of points stored in file (int, float)
+ * @return Success if read without error, error if num_points invalid or point_set non-empty.
  */
 CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t type){
     CGError_t status = CG_SUCCESS;
@@ -129,11 +131,38 @@ CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t 
 
 
 /**
+ * Function for writing a point set to a .csv file
+ * @ingroup file
+ * @param point_set Point set to write into the file
+ * @param file_pointer File pointer of file to write into.
+ * @return INVALID_INPUT if either is null or can't write to file, otherwise success.
+ */
+CGError_t csv_file_from_point_set(CGPointSet_t* point_set, FILE* file_pointer){
+    if(point_set == NULL || file_pointer == NULL)
+        return CG_INVALID_INPUT;
+    int i;
+    for(i = 0; i < point_set->num_points; i++){
+        if(point_set->points[i].type == CG_INT)
+            fprintf(file_pointer, "%d,%d\n", (int) point_set->points[i].xcoord, (int) point_set->points[i].ycoord);
+        else
+            fprintf(file_pointer, "%lf,%lf\n", point_set->points[i].xcoord, point_set->points[i].ycoord);
+    }
+    return CG_SUCCESS;
+}
+
+
+//----------------------------------------------------------------
+// Point Math Operations and relationships
+//----------------------------------------------------------------
+
+
+/**
  * Function that finds the turn made by three consecutive points.
- * param point_A The first point out of the three.
- * param point_B The center point out of the three.
- * param point_C The last point out of the three.
- * return Inline if points are colinear, otherwise left or right
+ * @ingroup ptmat
+ * @param point_A The first point out of the three.
+ * @param point_B The center point out of the three.
+ * @param point_C The last point out of the three.
+ * @return Inline if points are colinear, otherwise left or right
  */
 CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point_C){
     int value = (point_B->ycoord - point_A->ycoord)*(point_C->xcoord - point_B->xcoord) -
@@ -145,8 +174,9 @@ CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point
 
 /**
  * Function that finds the minimum point by y-coordinate, and if there is a tie, it finds the min x-coordinate as well. 
- * param point_set Point Set to search through
- * return NULL if point set is NULL or empty, otherwise lowest point by y-coordinate
+ * @ingroup ptmat
+ * @param point_set Point Set to search through
+ * @return NULL if point set is NULL or empty, otherwise lowest point by y-coordinate
  */
 CGPoint_t* find_lowest_point_in_set(CGPointSet_t* point_set){
     if(point_set == NULL)
@@ -169,9 +199,10 @@ CGPoint_t* find_lowest_point_in_set(CGPointSet_t* point_set){
 
 /**
  * Simple function that finds the distance between two points via the distance formula.
- * param point_A First point.
- * param point_B Second point.
- * return Straight line distance between point_A and point_B, negative if invalid.
+ * @ingroup ptmat
+ * @param point_A First point.
+ * @param point_B Second point.
+ * @return Straight line distance between point_A and point_B, negative if invalid.
  */
 double distance_between(CGPoint_t* point_A, CGPoint_t* point_B){
     if(point_A == NULL || point_B == NULL){
@@ -181,4 +212,24 @@ double distance_between(CGPoint_t* point_A, CGPoint_t* point_B){
     double delta_y = point_A->ycoord - point_B->ycoord;
     double hypotenuse_squared = pow(delta_x, 2) + pow(delta_y, 2);
     return pow(hypotenuse_squared, 0.5);
+}
+
+
+/**
+ * Function that finds the angle between two points.
+ * @ingroup ptmat
+ * @param initial_point The lower starting point
+ * @param end_point The ending point for the angle ray
+ * @return -1 if invalid, otherwise angle made by ray between two points and horizontal line.
+ */
+double angle_between(CGPoint_t* initial_point, CGPoint_t* end_point){
+    if(initial_point->ycoord > end_point->ycoord) return -1;
+    else if(initial_point->ycoord == end_point->ycoord && initial_point->xcoord > end_point->xcoord)
+        return -1;
+    if(initial_point == NULL || end_point == NULL) return -1;
+    int eq = compare_points(initial_point, end_point);
+    if(eq == 0) return -1;
+    else{
+        return acos((end_point->xcoord - initial_point->xcoord)/distance_between(initial_point, end_point));
+    }
 }
