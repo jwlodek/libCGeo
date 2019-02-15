@@ -22,17 +22,20 @@
  * SOFTWARE.
  *********************************************************************************/
 /**
- * @defgroup pttypes Point and Point Sets
- * @breif Initialize point sets, point and point set Data Structures.
- * @defgroup file File parsing and writing
- * @defgroup ptmat Math functions computed using points.
- * @breif Calculations between points (distance, angle, etc.)
+ * @defgroup pttypes Points and Point Sets
+ * @breif Initialize point sets, points, and point set Data Structures.
+ * @defgroup file File Parsing and Writing.
+ * @defgroup ptops Operations on Points.
+ * @breif Mathematics calculations and operations between points (distance, angle, etc.)
+ * @defgroup setops Operations on Point Sets
+ * @breif Operations performed on point sets (sorting, reallocation...)
  */
 
 
 // libCGeo includes
 #include "libCGeo/libCGeo.h"
 
+// Maximum number of characters read per line in .csv files
 #define LINE_BUFFER 256
 
 
@@ -74,6 +77,28 @@ CGError_t free_point_set(CGPointSet_t* point_set){
     else{
         free(point_set->points);
         free(point_set);
+        return CG_SUCCESS;
+    }
+}
+
+
+/**
+ * Function that copies points from one point set to another point set.
+ * @ingroup pttypes
+ * @param in_point_set Initialized input point set
+ * @param out_point_set Initialized output point set (must have same num_points as input set)
+ * @return CG_INVALID_INPUT if either param is Null or invalid, otherwise CG_SUCCESS
+ */
+CGError_t copy_point_set(CGPointSet_t* in_point_set, CGPointSet_t* out_point_set){
+    if(in_point_set == NULL || out_point_set == NULL)
+        return CG_INVALID_INPUT;
+    else if(in_point_set->num_points != out_point_set->num_points)
+        return CG_INVALID_INPUT;
+    else{
+        int i;
+        for(i = 0; i < in_point_set->num_points; i++){
+            out_point_set->points[i] = in_point_set->points[i];
+        }
         return CG_SUCCESS;
     }
 }
@@ -152,13 +177,13 @@ CGError_t csv_file_from_point_set(CGPointSet_t* point_set, FILE* file_pointer){
 
 
 //----------------------------------------------------------------
-// Point Math Operations and relationships
+// Math Operations and relationships for points
 //----------------------------------------------------------------
 
 
 /**
  * Function that finds the turn made by three consecutive points.
- * @ingroup ptmat
+ * @ingroup ptops
  * @param point_A The first point out of the three.
  * @param point_B The center point out of the three.
  * @param point_C The last point out of the three.
@@ -174,7 +199,7 @@ CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point
 
 /**
  * Function that finds the minimum point by y-coordinate, and if there is a tie, it finds the min x-coordinate as well. 
- * @ingroup ptmat
+ * @ingroup ptops
  * @param point_set Point Set to search through
  * @return NULL if point set is NULL or empty, otherwise lowest point by y-coordinate
  */
@@ -199,7 +224,7 @@ CGPoint_t* find_lowest_point_in_set(CGPointSet_t* point_set){
 
 /**
  * Simple function that finds the distance between two points via the distance formula.
- * @ingroup ptmat
+ * @ingroup ptops
  * @param point_A First point.
  * @param point_B Second point.
  * @return Straight line distance between point_A and point_B, negative if invalid.
@@ -217,7 +242,7 @@ double distance_between(CGPoint_t* point_A, CGPoint_t* point_B){
 
 /**
  * Function that finds the angle between two points.
- * @ingroup ptmat
+ * @ingroup ptops
  * @param initial_point The lower starting point
  * @param end_point The ending point for the angle ray
  * @return -1 if invalid, otherwise angle made by ray between two points and horizontal line.
@@ -232,4 +257,120 @@ double angle_between(CGPoint_t* initial_point, CGPoint_t* end_point){
     else{
         return acos((end_point->xcoord - initial_point->xcoord)/distance_between(initial_point, end_point));
     }
+}
+
+
+//----------------------------------------------------------------
+// Point Set operations (sorting, realloc, etc.)
+//----------------------------------------------------------------
+
+
+/**
+ * Function that sorts point set based on the values in each point's sort_val.
+ * @param point_set Point Set to be sorted
+ * @param output_point_set Point Set into which the sorted set is placed. If this is NULL or equal to point_set, then point_set overwritten by output
+ * @return CG_INVALID_INPUT if point_set is null or empty, otherwise success.
+ */
+CGError_t sort_point_set(CGPointSet_t* point_set, CGPointSet_t* output_point_set){
+    CGError_t status = CG_SUCCESS;
+    if(point_set == NULL) return CG_INVALID_INPUT;
+    else if(point_set->points == NULL) return CG_INVALID_INPUT;
+    else{
+        if(output_point_set == point_set || output_point_set == NULL){
+            status = sort_points(point_set->points, 0, point_set->num_points - 1);
+        }
+        else{
+            if(point_set->num_points != output_point_set->num_points || output_point_set->points == NULL)
+                status = CG_INVALID_INPUT;
+            else{
+                copy_point_set(point_set, output_point_set);
+                status = sort_points(output_point_set->points, 0, output_point_set->num_points - 1);
+            }
+        }
+        return status;
+    }
+}
+
+
+/**
+ * Helper function that sorts array of points.
+ * @ingroup setops
+ * @param points Pointer to array of points to sort
+ * @param left_index The starting point for left sub-array
+ * @param right_index The starting point for the right sub-array
+ * @return INVALID INPUT if points is null or left and right are invalid, otherwise success.
+ */
+CGError_t sort_points(CGPoint_t* points, int left_index, int right_index){
+    if(points == NULL)
+        return CG_INVALID_INPUT;
+    else if(right_index < left_index)
+        return CG_INVALID_INPUT;
+    else{
+        int center_index = left_index+((right_index - left_index)/2);
+        CGError_t status_left = sort_points(points, left_index, center_index);
+        CGError_t status_right = sort_points(points, center_index + 1, right_index);
+
+        if(status_left != CG_SUCCESS || status_right != CG_SUCCESS) return CG_INVALID_INPUT;
+
+        CGError_t status_merge = merge_halves(points, left_index, center_index, right_index);
+        return status_merge;
+    }
+}
+
+
+/**
+ * Function that implements merge-sort merging for Points array.
+ * @ingroup setops
+ * @param points Pointer to array of points
+ * @param left_index index of the left sub-array
+ * @param center_index index of the center of the points sub arrays
+ * @param right_index index of the right sub-array
+ * @return CG_INVALID_INPUT if error occurs, otherwise, CG_SUCCESS
+ */
+CGError_t merge_halves(CGPoint_t* points, int left_index, int center_index, int right_index){
+    int left_counter, right_counter, merge_index;
+
+    int left_sub_length = center_index - left_index + 1;
+    int right_sub_length = right_index - center_index;
+
+    CGPoint_t temp_left_array[left_sub_length];
+    CGPoint_t temp_right_array[right_sub_length];
+
+    for(left_counter = 0; left_counter < left_sub_length; left_counter++){
+        if(points[left_index + left_counter].sort_val_desc == NULL) return CG_INVALID_INPUT;
+        temp_left_array[left_counter] = points[left_index + left_counter];
+    }
+
+    for(right_counter = 0; right_counter < right_sub_length; right_counter++){
+        if(points[center_index + 1 + right_counter].sort_val_desc == NULL) return CG_INVALID_INPUT;
+        temp_right_array[right_counter] = points[center_index + 1 + right_counter];
+    }
+
+    left_counter = 0;
+    right_counter = 0;
+    merge_index = left_index;
+
+    while(left_counter < left_sub_length && right_counter < right_sub_length){
+        if(temp_left_array[left_counter].sort_val <= temp_right_array[right_counter].sort_val){
+            points[merge_index] = temp_left_array[left_counter];
+            left_counter++;
+        }
+        else{
+            points[merge_index] = temp_right_array[right_counter];
+            right_counter++;
+        }
+        merge_index++;
+    }
+
+    while(left_counter < left_sub_length){
+        points[merge_index] = temp_left_array[left_counter];
+        left_counter++;
+        merge_index++;
+    }
+    while(right_counter < right_sub_length){
+        points[merge_index] = temp_right_array[right_counter];
+        right_counter++;
+        merge_index++;
+    }
+    return CG_SUCCESS;
 }

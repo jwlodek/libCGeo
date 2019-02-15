@@ -119,8 +119,9 @@ CGError_t free_point_set(CGPointSet_t* point_set);
 CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t type);
 
 // sorting points (uses merge-sort)
-CGError_t sort_points_in_set(CGPoint_t* points, int left_point, int right_point);
-CGError_t merge_halves(CGPoint_t* points, int left_point, int center_point, int right_point);
+CGError_t sort_point_set(CGPointSet_t* point_set, CGPointSet_t* output_point_set);
+CGError_t sort_points(CGPoint_t* points, int left_index, int right_index);
+CGError_t merge_halves(CGPoint_t* points, int left_index, int center_index, int right_index);
 
 // Point operations and calculations
 double distance_between(CGPoint_t* point_A, CGPoint_t* point_B);
