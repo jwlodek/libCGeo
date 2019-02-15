@@ -78,6 +78,21 @@ typedef enum CG_ERROR {
 } CGError_t;
 
 
+/**
+ * Enum for specifying Convex hull algorithm to use on point set.
+ * @ingroup chull
+ */
+typedef enum CG_CONVEX_HULL {
+    CG_GRAHAM_SCAN,     /**< Compute convex hull with Graham Scan */
+} CGConvexHull_t;
+
+
+typedef enum CG_COMPUTE_TYPE {
+    CG_NO_DEGENERACY,   /**< Compute without accounting for degeneracy */
+    CG_W_DEGENERACY,    /**< Compute while taking degenracies into account */
+} CGCompute_t;
+
+
 //----------------------------------------------------------------
 // Data Structures
 //----------------------------------------------------------------
@@ -111,12 +126,14 @@ typedef struct CG_PointSet {
 // Function Definitions - Common
 //----------------------------------------------------------------
 
+
 // Init and free point sets
 CGPointSet_t* init_point_set(int num_points);
 CGError_t free_point_set(CGPointSet_t* point_set);
 
 // reading .csv files
-CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t type);
+CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file_pointer, CGType_t type);
+CGError_t csv_file_from_point_set(CGPointSet_t* point_set, FILE* file_pointer);
 
 // sorting points (uses merge-sort)
 CGError_t sort_point_set(CGPointSet_t* point_set, CGPointSet_t* output_point_set);
@@ -131,9 +148,11 @@ double angle_between(CGPoint_t* initial_point, CGPoint_t* end_point);
 // Other calculations
 CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point_C);
 
+
 //----------------------------------------------------------------
 // Function Definitions - Diagnostics
 //----------------------------------------------------------------
+
 
 // error printing
 void print_cg_error(CGError_t error, const char* function_name);
@@ -150,13 +169,16 @@ int compare_points(CGPoint_t* point_A, CGPoint_t* point_B);
 // random point generation for testing
 CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type);
 
+
 //----------------------------------------------------------------
-// Function Definitions - Graham-Scan
+// Function Definitions - Convex Hull
 //----------------------------------------------------------------
+
 
 CGError_t compute_point_angles(CGPointSet_t* point_set);
 CGError_t compute_graham_scan(CGPointSet_t* input_set, CGPointSet_t* output_set);
-CGError_t remove_gs_degeneracies(CGPointSet_t* input_set);
+CGError_t remove_colinear_degeneracies(CGPointSet_t* input_set);
+
 
 //----------------------------------------------------------------
 // Function Definitions - Triangulation

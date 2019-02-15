@@ -23,10 +23,10 @@
  *********************************************************************************/
 /**
  * This is the source file that contains implementations of all functions specific to
- * graham scan.
+ * computing the convex hull of a point set
  *
- * @defgroup graham Graham Scan
- * @breif Functions and data types for finding Graham Scan convex hull
+ * @defgroup chull Convex Hull Functions
+ * @breif Functions and data types used by libCGeo for finding the Convex Hull of a Point Set.
  */
 
 #include "libCGeo/libCGeo.h"
@@ -49,10 +49,10 @@ CGError_t compute_point_angles(CGPointSet_t* point_set){
         lowest_point->sort_val_desc = "lowest_point";
         int i;
         for(i = 0; i < point_set->num_points; i++){
-            double angle_between = angle_between(lowest_point, &(point_set->points[i]));
-            if(angle_between < 0)
+            double angle = angle_between(lowest_point, &(point_set->points[i]));
+            if(angle < 0)
                 return CG_INVALID_INPUT;
-            point_set->points[i].sort_val = angle_between;
+            point_set->points[i].sort_val = angle;
             point_set->points[i].sort_val_desc = "angle with lowest point";
         }
         return CG_SUCCESS;
