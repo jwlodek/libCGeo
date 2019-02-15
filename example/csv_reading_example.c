@@ -33,8 +33,15 @@
 #include "libCGeo/libCGeo.h"
 
 int main(int argc, char** argv){
-    FILE* input_file = fopen("example_inputs/input_A.csv", "r");
-    FILE* output_file = fopen("example_inputs/output_A.csv", "w");
+
+    if(argc != 2){
+        print_cg_error(CG_INVALID_INPUT, main);
+        return -1;
+    }
+    const char* input_file_path = argv[1];
+
+    FILE* input_file = fopen(input_file_path, "r");
+    FILE* output_file = fopen("output_A.csv", "w");
 
     if(input_file == NULL || output_file == NULL){
         print_cg_error(CG_NO_FILE, "main");

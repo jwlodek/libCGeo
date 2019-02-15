@@ -32,31 +32,33 @@
 #include "libCGeo/libCGeo.h"
 
 int main(int argc, char** argv){
-    CGPoint_t p1;
-    CGPoint_t p2;
-    CGPoint_t p3;
-    p1.type = CG_INT;
-    p2.type = CG_INT;
-    p3.type = CG_FLOAT;
-    p1.xcoord = 0;
-    p1.ycoord = 0;
-    p2.xcoord = 1;
-    p2.ycoord = 3;
-    p3.xcoord = 0.1;
-    p3.ycoord = 5.4;
-    CGPointSet_t ps = *((CGPointSet_t*) malloc(sizeof(CGPointSet_t)));
-    ps.num_points = 3;
-    ps.points = malloc(ps.num_points*sizeof(CGPoint_t));
-    ps.points[0] = p1;
-    ps.points[1] = p2;
-    ps.points[2] = p3;
 
-    print_points(&ps);
+    //initialize the point set
+    CGPointSet_t* point_set = init_point_set(3);
+
+    // add values to the points
+    CGPoint_t* p1 = &(point_set->points[0]);
+    CGPoint_t* p2 = &(point_set->points[1]);
+    CGPoint_t* p3 = &(point_set->points[2]);
+    p1->type = CG_INT;
+    p2->type = CG_INT;
+    p3->type = CG_FLOAT;
+    p1->xcoord = 0;
+    p1->ycoord = 0;
+    p2->xcoord = 1;
+    p2->ycoord = 3;
+    p3->xcoord = 0.1;
+    p3->ycoord = 5.4;
+
+    // print the point sin the set
+    print_points(point_set);
 
     // this will print an invalid input error message
     print_points(NULL);
 
     // this will print an invalid type error message
     print_cg_error(CG_INVALID_TYPE, "main");
-    free_point_set(&ps);
+
+    // free the point set
+    free_point_set(point_set);
 }

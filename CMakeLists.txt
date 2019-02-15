@@ -68,8 +68,11 @@ endforeach()
 
 if(BUILD_EXAMPLES)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-    add_executable(example example/diagnostics_example.c)
-    target_link_libraries(example m CGeo)
+    add_executable(diagnostics_example example/diagnostics_example.c)
+    target_link_libraries(diagnostics_example m CGeo)
+
+    add_executable(csv_read_example example/csv_reading_example.c)
+    target_link_libraries(csv_read_example m CGeo)
 endif()
 
 find_package(PkgConfig)
