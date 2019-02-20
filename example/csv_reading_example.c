@@ -34,49 +34,65 @@
 
 int main(int argc, char** argv){
 
+
+    // First, we will parse the second command line argument the file path to a .csv file
     if(argc != 2){
         print_cg_error(CG_INVALID_INPUT, "main");
         return -1;
     }
+
     const char* input_file_path = argv[1];
 
+    // open the input and output files
     FILE* input_file = fopen(input_file_path, "r");
     FILE* output_file = fopen("output_A.csv", "w");
 
+    // Error check
     if(input_file == NULL || output_file == NULL){
         print_cg_error(CG_NO_FILE, "main");
         return -1;
     }
     
+    // Initialize point set. My example input file has 7 points, so we init a point set with 7 spots
     CGPointSet_t* point_set = init_point_set(7);
+
+    // read into the point set from the input file
     if(point_set_from_csv_file(point_set, input_file, CG_INT) != CG_SUCCESS){
         print_cg_error(CG_INVALID_INPUT, "point_set_from_csv_file");
         return -1;
     }
 
+    // print out all of the points in the set
     print_points(point_set);
 
+    // Find the lowest point in the point set
     CGPoint_t* lowest = find_lowest_point_in_set(point_set);
     fprintf(stdout, "The lowest point in the set is:\n");
     print_point_to_file(lowest, stdout);
 
+    // calculate the distance between each point and the lowest point
     int i;
     for(i = 0; i < point_set->num_points; i++){
         point_set->points[i].sort_val = distance_between(&(point_set->points[i]), lowest);
+        // Note that it is necessary to set the sort_val_desc value: if it is NULL, sorting will fail.
         point_set->points[i].sort_val_desc = "Distance to lowest point";
     }
 
+    // sort the points 
     CGError_t sort_status = sort_point_set(point_set, NULL);
 
+    // Error check
     if(sort_status != CG_SUCCESS){
         print_cg_error(CG_INVALID_INPUT, "sort_point_set");
     }
 
+    // Print sorted point set to output file
     if(csv_file_from_point_set(point_set, output_file) != CG_SUCCESS){
         print_cg_error(CG_NO_FILE, "csv_file_from_point_set");
         return -1;
     }
 
+    // free up memory and exit
     free_point_set(point_set);
     fclose(input_file);
     fclose(output_file);

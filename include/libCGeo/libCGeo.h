@@ -79,6 +79,17 @@ typedef enum CG_ERROR {
 
 
 /**
+ * Enum that allows for selecting the amount of output information to print.
+ * @ingroup diagnostics
+ */
+typedef enum CG_DESC_TYPE {
+    CG_MIN                  = 0,    /**< Minimum output information */
+    CG_VERBOSE              = 1,    /**< More detailed output information */
+    CG_FULL                 = 2,    /**< All available output information */
+} CGDescDetail_t;
+
+
+/**
  * Enum for specifying Convex hull algorithm to use on point set.
  * @ingroup chull
  */

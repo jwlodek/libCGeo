@@ -84,18 +84,45 @@ void print_cg_error(CGError_t error, const char* function_name){
 
 
 /**
+ * Simple function for printing basic point information to stdout
+ * @ingroup diagnostics
+ * @param point Pointer to the point to print.
+ * @return status SUCCESS or INVALID_INPUT
+ */
+CGError_t print_point(CGPoint_t* point){
+    CGError_t status = print_point_to_file(point, stdout, CG_MIN);
+    return status;
+}
+
+
+/**
  * Simple function for printing out point information to file stream
  * @ingroup diagnostics
- * @param point pointer to CGPoint
- * @return The appropriate error code
+ * @param point pointer to CGPoint.
+ * @param fp Pointer to file stream to print into.
+ * @param desc_detail Flag specifying how much point information to print.
+ * @return The appropriate error/success code.
  */
-CGError_t print_point_to_file(CGPoint_t* point, FILE* fp){
+CGError_t print_point_to_file(CGPoint_t* point, FILE* fp, CGDescDetail_t desc_detail){
     const char* function_name = "print_point_to_file";
     int result;
-    if(point->type == CG_INT)
-        result = fprintf(fp, "int, coords[x: %d, y: %d]\n", (int) point->xcoord, (int) point->ycoord);
-    else if(point->type == CG_FLOAT)
-        result = fprintf(fp, "float, coords[x: %lf, y: %lf]\n", point->xcoord, point->ycoord);
+    switch(desc_detail){
+        case CG_MIN:
+            if(point->type == CG_INT)
+                fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
+            else
+                fprintf(fp, "x: %lf, y: %lf\n", point->xcoord, point->ycoord);
+            break;
+        case CG_VERBOSE:
+            if(point->type == CG_INT){
+                fprintf(fp, "CG_INT type point with coords:\n");
+                fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
+            }
+            else{
+                fprintf(fp, "CG_INT type point with coords:\n");
+                fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
+            }
+    }
 	if (result != 0) return CG_INVALID_INPUT;
 	else return CG_SUCCESS;
 }
@@ -108,7 +135,7 @@ CGError_t print_point_to_file(CGPoint_t* point, FILE* fp){
  * @return The appropriate error code
  */
 CGError_t print_points(CGPointSet_t* point_set){
-    CGError_t status = print_points_to_file(point_set, stdout);
+    CGError_t status = print_points_to_file(point_set, stdout, CG_MIN);
     return status;
 }
 
@@ -120,7 +147,7 @@ CGError_t print_points(CGPointSet_t* point_set){
  * @param fp File pointer of file in which to write
  * @return The appropriate error code
  */
-CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp){
+CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp, CGDescDetail_t desc_detail){
     CGError_t status = CG_SUCCESS;
     const char* function_name = "print_points_to_file";
 
@@ -139,7 +166,7 @@ CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp){
             if(point_set->points+i == NULL){
                 return CG_INVALID_INPUT;
             }
-            print_point_to_file(point_set->points+i, fp);
+            print_point_to_file(point_set->points+i, fp, desc_detail);
         }
     }
 	return CG_SUCCESS;
