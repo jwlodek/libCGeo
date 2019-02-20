@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(libCGeo)
 
 set(CMAKE_BUILD_TARGET "Shared")
+set(CMAKE_BUILD_TYPE "Debug")
 
 if(NOT CMAKE_BUILD_TYPE)
     message(STATUS "Did not select build type, will build Release")
