@@ -35,7 +35,7 @@
 int main(int argc, char** argv){
 
     if(argc != 2){
-        print_cg_error(CG_INVALID_INPUT, main);
+        print_cg_error(CG_INVALID_INPUT, "main");
         return -1;
     }
     const char* input_file_path = argv[1];
@@ -57,8 +57,9 @@ int main(int argc, char** argv){
     print_points(point_set);
 
     CGPoint_t* lowest = find_lowest_point_in_set(point_set);
-    fprintf("The lowest point in the set is:\n", stdout);
+    fprintf(stdout, "The lowest point in the set is:\n");
     print_point_to_file(lowest, stdout);
+    
     int i;
     for(i = 0; i < point_set->num_points; i++){
         point_set->points[i].sort_val = distance_between(&(point_set->points[i]), lowest);
