@@ -301,20 +301,15 @@ CGError_t sort_point_set(CGPointSet_t* point_set, CGPointSet_t* output_point_set
  * @return INVALID INPUT if points is null or left and right are invalid, otherwise success.
  */
 CGError_t sort_points(CGPoint_t* points, int left_index, int right_index){
-    if(points == NULL)
-        return CG_INVALID_INPUT;
-    else if(right_index < left_index)
-        return CG_INVALID_INPUT;
-    else{
+    if(left_index < right_index){
         int center_index = left_index+((right_index - left_index)/2);
         CGError_t status_left = sort_points(points, left_index, center_index);
         CGError_t status_right = sort_points(points, center_index + 1, right_index);
 
-        if(status_left != CG_SUCCESS || status_right != CG_SUCCESS) return CG_INVALID_INPUT;
-
         CGError_t status_merge = merge_halves(points, left_index, center_index, right_index);
         return status_merge;
     }
+    return CG_INVALID_INPUT;
 }
 
 

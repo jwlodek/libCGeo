@@ -59,14 +59,16 @@ int main(int argc, char** argv){
     CGPoint_t* lowest = find_lowest_point_in_set(point_set);
     fprintf(stdout, "The lowest point in the set is:\n");
     print_point_to_file(lowest, stdout);
-    
+
     int i;
     for(i = 0; i < point_set->num_points; i++){
         point_set->points[i].sort_val = distance_between(&(point_set->points[i]), lowest);
         point_set->points[i].sort_val_desc = "Distance to lowest point";
     }
 
-    if(sort_point_set(point_set, NULL) != CG_SUCCESS){
+    CGError_t sort_status = sort_point_set(point_set, NULL);
+
+    if(sort_status != CG_SUCCESS){
         print_cg_error(CG_INVALID_INPUT, "sort_point_set");
     }
 
