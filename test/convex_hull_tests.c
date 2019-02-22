@@ -39,8 +39,8 @@ FILE* output_test_file;
 
 
 void setup_convex_hull_test(void){
-    input_test_file = fopen("/home/jwlodek/Documents/ProgrammingWorkspace/libCGeo/test/test_inputs/input_12pts.csv");
-    output_test_file = fopen("/home/jwlodek/Documents/ProgrammingWorkspace/libCGeo/test/test_outputs/output_12pts_CH.csv");
+    input_test_file = fopen("/home/jwlodek/Documents/ProgrammingWorkspace/libCGeo/test/test_inputs/input_12pts.csv", "r");
+    output_test_file = fopen("/home/jwlodek/Documents/ProgrammingWorkspace/libCGeo/test/test_outputs/output_12pts_CH.csv", "r");
     point_set_A = init_point_set(12);
     point_set_B = init_point_set(8);
 }
@@ -51,6 +51,8 @@ void teardown_general(void){
     free_point_set(point_set_B);
     if(point_set_C != NULL)
         free_point_set(point_set_C);
+    fclose(input_test_file);
+    fclose(output_test_file);
 }
 
 Test(asserts, graham_scan_test, .init = setup_convex_hull_test, .fini = teardown_general){
