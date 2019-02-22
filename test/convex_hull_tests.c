@@ -51,8 +51,8 @@ void teardown_general(void){
     free_point_set(point_set_B);
     if(point_set_C != NULL)
         free_point_set(point_set_C);
-    fclose(input_test_file);
-    fclose(output_test_file);
+    if(input_test_file != NULL) fclose(input_test_file);
+    if(output_test_file != NULL) fclose(output_test_file);
 }
 
 Test(asserts, graham_scan_test, .init = setup_convex_hull_test, .fini = teardown_general){
