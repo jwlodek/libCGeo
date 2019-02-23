@@ -68,7 +68,7 @@ int main(int argc, char** argv){
     // Find the lowest point in the point set
     CGPoint_t* lowest = find_lowest_point_in_set(point_set);
     fprintf(stdout, "The lowest point in the set is:\n");
-    print_point_to_file(lowest, stdout);
+    print_point_to_file(lowest, stdout, CG_MIN);
 
     // calculate the distance between each point and the lowest point
     int i;

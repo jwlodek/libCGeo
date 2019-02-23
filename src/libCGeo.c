@@ -328,8 +328,9 @@ CGError_t merge_halves(CGPoint_t* points, int left_index, int center_index, int 
     int left_sub_length = center_index - left_index + 1;
     int right_sub_length = right_index - center_index;
 
-    CGPoint_t temp_left_array[left_sub_length];
-    CGPoint_t temp_right_array[right_sub_length];
+	CGPoint_t* temp_left_array = (CGPoint_t*)malloc(left_sub_length * sizeof(CGPoint_t));
+	CGPoint_t* temp_right_array = (CGPoint_t*)malloc(right_sub_length * sizeof(CGPoint_t));
+
 
     for(left_counter = 0; left_counter < left_sub_length; left_counter++){
         if(points[left_index + left_counter].sort_val_desc == NULL) return CG_INVALID_INPUT;
@@ -367,5 +368,8 @@ CGError_t merge_halves(CGPoint_t* points, int left_index, int center_index, int 
         right_counter++;
         merge_index++;
     }
+
+	free(temp_left_array);
+	free(temp_right_array);
     return CG_SUCCESS;
 }

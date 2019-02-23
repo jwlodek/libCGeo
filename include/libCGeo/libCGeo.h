@@ -169,9 +169,9 @@ CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point
 void print_cg_error(CGError_t error, const char* function_name);
 
 // point printing
-CGError_t print_point_to_file(CGPoint_t* point, FILE* fp);
+CGError_t print_point_to_file(CGPoint_t* point, FILE* fp, CGDescDetail_t desc_detail);
 CGError_t print_points(CGPointSet_t* point_set);
-CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp);
+CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp, CGDescDetail_t desc_detail);
 
 // point set comparisons
 int compare_point_sets(CGPointSet_t* point_set_A, CGPointSet_t* point_set_B);

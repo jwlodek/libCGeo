@@ -60,7 +60,7 @@ CGError_t compute_point_angles(CGPointSet_t* point_set){
 }
 
 
-CGError_t remove_gs_degeneracies(CGPointSet_t* point_set){
+CGError_t remove_colinear_degeneracies(CGPointSet_t* point_set){
     //TODO
     return CG_UNIMPLEMENTED;
 }

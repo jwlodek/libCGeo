@@ -109,19 +109,24 @@ CGError_t print_point_to_file(CGPoint_t* point, FILE* fp, CGDescDetail_t desc_de
     switch(desc_detail){
         case CG_MIN:
             if(point->type == CG_INT)
-                fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
+                result = fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
             else
-                fprintf(fp, "x: %lf, y: %lf\n", point->xcoord, point->ycoord);
+				result = fprintf(fp, "x: %lf, y: %lf\n", point->xcoord, point->ycoord);
             break;
         case CG_VERBOSE:
             if(point->type == CG_INT){
-                fprintf(fp, "CG_INT type point with coords:\n");
-                fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
+				result = fprintf(fp, "CG_INT type point with coords:\n");
+				result = fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
             }
             else{
-                fprintf(fp, "CG_INT type point with coords:\n");
-                fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
+				result = fprintf(fp, "CG_INT type point with coords:\n");
+				result = fprintf(fp, "x: %lf, y: %lf\n", point->xcoord, point->ycoord);
             }
+			break;
+		default:
+			print_cg_error(CG_INVALID_INPUT, function_name);
+			result = -1;
+			break;
     }
 	if (result != 0) return CG_INVALID_INPUT;
 	else return CG_SUCCESS;
