@@ -47,6 +47,7 @@ typedef struct CG_ERROR_MESSAGE {
 } CGErrorMessage_t;
 
 
+/** @internal */
 static const CGErrorMessage_t error_messages[] = {
     {CG_SUCCESS, "Success"},
     {CG_INVALID_TYPE  , "Invalid point type"},
@@ -221,7 +222,7 @@ CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type){
         }
         point_set->points[i].type = type;
     }
-    return CG_UNIMPLEMENTED;
+    return CG_SUCCESS;
 }
 
 
