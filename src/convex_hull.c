@@ -156,3 +156,30 @@ CGPointSet_t* compute_graham_scan(CGPointSet_t* point_set, CGCompute_t compute_t
     else
         return stack_set;
 }
+
+
+/**
+ * Function that switches on all of the convex hull functions.
+ * @ingroup chull
+ * @param point_set Initialized point set to perform convex hull on.
+ * @param output_set Unallocated pointer to point set, where computed hull will be placed.
+ * @param convex_hull_method Which convex hull algorithm to perform
+ * @param compute_type Toggle for computing with or without degeneracy
+ * @return UNIMPLEMENTED if invalid chull method, INVALID_INPUT if failure, SUCCESS otherwise
+ */
+CGError_t compute_convex_hull(CGPointSet_t* point_set, CGPointSet_t* output_set, CGConvexHull_t convex_hull_method, CGCompute_t compute_type){
+    CGPointSet_t* convex_hull;
+    switch(convex_hull_method){
+        case CG_GRAHAM_SCAN:
+            convex_hull = compute_graham_scan(point_set, compute_type);
+            break;
+        default:
+            return CG_UNIMPLEMENTED;
+    }
+    if(convex_hull == NULL)
+        return CG_INVALID_INPUT;
+    else{
+        output_set = convex_hull;
+        return CG_SUCCESS;
+    }
+}
