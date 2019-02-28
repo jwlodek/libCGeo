@@ -31,6 +31,7 @@
 // includes
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "libCGeo/libCGeo.h"
 
 
@@ -196,14 +197,15 @@ CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type){
     else if(point_set->num_points == 0 || point_set->points == NULL)
         return CG_INVALID_INPUT;
     int i;
+    srand(time(NULL));
     for(i = 0; i < point_set->num_points; i++){
         if(type == CG_INT){
-            point_set->points[i].xcoord = (int) 0;
-            point_set->points[i].ycoord = (int) 0;
+            point_set->points[i].xcoord = (int) (((double) rand()/RAND_MAX*2 - 1) * 100);
+            point_set->points[i].ycoord = (int) (((double) rand()/RAND_MAX*2 - 1) * 100);
         }
         else{
-            point_set->points[i].xcoord = 0;
-            point_set->points[i].ycoord = 0;
+            point_set->points[i].xcoord = ((double) rand()/RAND_MAX*2.0 - 1.0) * 100.0;
+            point_set->points[i].ycoord = ((double) rand()/RAND_MAX*2.0 - 1.0) * 100.0;
         }
         point_set->points[i].type = type;
     }

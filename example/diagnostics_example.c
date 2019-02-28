@@ -35,6 +35,7 @@ int main(int argc, char** argv){
 
     //initialize the point set
     CGPointSet_t* point_set = init_point_set(3);
+    CGPointSet_t* point_set_random = init_point_set(12);
 
     // add values to the points
     CGPoint_t* p1 = &(point_set->points[0]);
@@ -50,6 +51,11 @@ int main(int argc, char** argv){
     p3->xcoord = 0.1;
     p3->ycoord = 5.4;
 
+    // generate a point set with 12 random points
+    CGError_t gen_status = generate_random_point_set(point_set_random, CG_INT);
+    printf("We have generated a random point set:\n");
+    print_points(point_set_random);
+
     // print the point sin the set
     print_points(point_set);
 
@@ -61,4 +67,5 @@ int main(int argc, char** argv){
 
     // free the point set
     free_point_set(point_set);
+    free_point_set(point_set_random);
 }
