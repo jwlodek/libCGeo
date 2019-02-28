@@ -63,12 +63,13 @@ int main(int argc, char** argv){
     }
 
     // print out all of the points in the set
-    print_points(point_set);
+    // print_points(point_set);
 
     // Find the lowest point in the point set
     CGPoint_t* lowest = find_lowest_point_in_set(point_set);
     fprintf(stdout, "The lowest point in the set is:\n");
     print_point_to_file(lowest, stdout, CG_MIN);
+    fprintf(stdout, "------------------------\n");
 
     // calculate the distance between each point and the lowest point
     int i;
@@ -77,6 +78,10 @@ int main(int argc, char** argv){
         // Note that it is necessary to set the sort_val_desc value: if it is NULL, sorting will fail.
         point_set->points[i].sort_val_desc = "Distance to lowest point";
     }
+
+    fprintf(stdout, "Points with sort values are:\n");
+    print_points_to_file(point_set, stdout, CG_FULL);
+
 
     // sort the points 
     CGError_t sort_status = sort_point_set(point_set, NULL);

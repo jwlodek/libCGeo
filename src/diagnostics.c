@@ -120,10 +120,22 @@ CGError_t print_point_to_file(CGPoint_t* point, FILE* fp, CGDescDetail_t desc_de
 				result = fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
             }
             else{
-				result = fprintf(fp, "CG_INT type point with coords:\n");
+				result = fprintf(fp, "CG_FLOAT type point with coords:\n");
 				result = fprintf(fp, "x: %lf, y: %lf\n", point->xcoord, point->ycoord);
             }
 			break;
+        case CG_FULL:
+            if(point->type == CG_INT){
+                result = fprintf(fp, "CG_INT type point with coords:\n");
+				result = fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
+            }
+            else{
+                result = fprintf(fp, "CG_FLOAT type point with coords:\n");
+				result = fprintf(fp, "x: %lf, y: %lf\n", point->xcoord, point->ycoord);
+            }
+            fprintf(fp, "Sort by: %s, with value: %lf\n", point->sort_val_desc, point->sort_val);
+            fprintf(fp,"------------------------------\n");
+            break;
 		default:
 			print_cg_error(CG_INVALID_INPUT, function_name);
 			result = -1;
