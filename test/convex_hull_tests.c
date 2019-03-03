@@ -55,10 +55,10 @@ void teardown_general(void){
     if(output_test_file != NULL) fclose(output_test_file);
 }
 
-Test(asserts, graham_scan_test, .init = setup_convex_hull_test, .fini = teardown_general){
+Test(asserts, graham_scan_test_12pt, .init = setup_convex_hull_test, .fini = teardown_general){
     CGError_t status_read_A = point_set_from_csv_file(point_set_A, input_test_file, CG_INT);
     CGError_t status_read_B = point_set_from_csv_file(point_set_B, output_test_file, CG_INT);
-    CGError_t status_CH = compute_graham_scan(point_set_A, point_set_C);
+    CGPointSet_t* convex_hull = compute_graham_scan(point_set_A, CG_W_DEGENERACY);
     int compare = compare_point_sets(point_set_B, point_set_C);
     cr_assert(compare == 0, "Graham Scan not computed correctly");
 }

@@ -125,7 +125,7 @@ CGPointSet_t* compute_graham_scan(CGPointSet_t* point_set, CGCompute_t compute_t
     CGError_t status;
     status = compute_point_angles(point_set);
     if(status != CG_SUCCESS)
-        return status;
+        return NULL;
 
     // initialize the stack
     int stack_top = 2;

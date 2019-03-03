@@ -125,9 +125,9 @@ Test(asserts, distance_between_points, .init = setup_3_points, .fini = teardown_
 
 
 /* Test for sorting points by x/y-coord */
-Test(asserts, sort_coord, .init = setup_12_points, .fini = teardown_general){
-    CGError_t status = point_set_from_csv_file(point_set_A, input_test_file, CG_INT);
-    CGError_t status = point_set_from_csv_file(point_set_B, output_test_file1, CG_INT);
+Test(asserts, sort_coord_x, .init = setup_12_points, .fini = teardown_general){
+    CGError_t status_in = point_set_from_csv_file(point_set_A, input_test_file, CG_INT);
+    CGError_t status_out = point_set_from_csv_file(point_set_B, output_test_file1, CG_INT);
     int i;
     for(i = 0; i< point_set_A->num_points; i++){
         point_set_A->points[i].sort_val = point_set_A->points[i].xcoord;
@@ -140,13 +140,13 @@ Test(asserts, sort_coord, .init = setup_12_points, .fini = teardown_general){
 
 
 /* Test for sorting points by distance to lowest point */
-Test(asserts, sort_coord, .init = setup_12_points, .fini = teardown_general){
-    CGError_t status = point_set_from_csv_file(point_set_A, input_test_file, CG_INT);
-    CGError_t status = point_set_from_csv_file(point_set_B, output_test_file2, CG_INT);
+Test(asserts, sort_coord_dist, .init = setup_12_points, .fini = teardown_general){
+    CGError_t status_in = point_set_from_csv_file(point_set_A, input_test_file, CG_INT);
+    CGError_t status_out = point_set_from_csv_file(point_set_B, output_test_file2, CG_INT);
     CGPoint_t* point = find_lowest_point_in_set(point_set_A);
     int i;
     for(i = 0; i< point_set_A->num_points; i++){
-        point_set_A->points[i].sort_val = distanceBetween(&(point_set_A->points[i].xcoord), point);
+        point_set_A->points[i].sort_val = distance_between(&(point_set_A->points[i].xcoord), point);
         point_set_A->points[i].sort_val_desc = "distance to lowest";
     }
     CGError_t status_sort = sort_point_set(point_set_A, NULL);
