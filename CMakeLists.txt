@@ -31,7 +31,7 @@ include(GNUInstallDirs)
 set(INSTALL_CMAKE_DIR "${libCGeo_SOURCE_DIR}/lib/cmake/libCGeo" CACHE PATH
     "Installation dir for CMake files")
 
-set(SOURCES src/libCGeo.c src/diagnostics.c)
+set(SOURCES src/libCGeo.c src/diagnostics.c src/convex_hull.c)
 
 include_directories(${libCGeo_SOURCE_DIR}/include ${libCGeo_BINARY_DIR}/include)
 
@@ -91,8 +91,11 @@ if(BUILD_UTESTS)
         endif()
     endif()
     if(CRITERION_FOUND)
-        add_executable(CGeo_test test/libCGeo_tests.c)
-        target_link_libraries(CGeo_test CGeo m criterion)
+        add_executable(libCGeo_Core_tests test/libCGeo_tests.c)
+        target_link_libraries(libCGeo_Core_tests CGeo m criterion)
+        
+        add_executable(libCGeo_hull_tests test/convex_hull_tests.c)
+        target_link_libraries(libCGeo_hull_tests CGeo m criterion)
     else()
         message("Criterion library not found, not building unit tests")
     endif()
