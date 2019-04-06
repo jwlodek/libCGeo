@@ -57,13 +57,15 @@ int main(int argc, char** argv){
     print_points(point_set_random);
 
     // print the point sin the set
+    printf("Printing preconfigured point set:\n");
     print_points(point_set);
 
-    // this will print an invalid input error message
-    print_points(NULL);
+    // this will return an INVALID_INPUT Error
+    CGError_t err = print_points(NULL);
 
     // this will print an invalid type error message
-    print_cg_error(CG_INVALID_TYPE, "main");
+    if(err != CG_SUCCESS)
+        print_cg_error(err, "print_points");
 
     // free the point set
     free_point_set(point_set);

@@ -55,6 +55,7 @@ int main(int argc, char** argv){
     
     // Initialize point set. My example input file has 7 points, so we init a point set with 7 spots
     CGPointSet_t* point_set = init_point_set(7);
+    printf("Initialized empty point set\n");
 
     // read into the point set from the input file
     if(point_set_from_csv_file(point_set, input_file, CG_INT) != CG_SUCCESS){
@@ -63,7 +64,8 @@ int main(int argc, char** argv){
     }
 
     // print out all of the points in the set
-    // print_points(point_set);
+    printf("Points read from the set are:\n");
+    print_points(point_set);
 
     // Find the lowest point in the point set
     CGPoint_t* lowest = find_lowest_point_in_set(point_set);
