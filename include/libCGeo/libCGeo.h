@@ -137,10 +137,18 @@ typedef struct CG_PointSet {
 // Function Definitions - Common
 //----------------------------------------------------------------
 
+<<<<<<< Updated upstream:include/libCGeo/libCGeo.h
 
 // Init and free point sets
 CGPointSet_t* init_point_set(int num_points);
 CGError_t free_point_set(CGPointSet_t* point_set);
+=======
+CGError_t free_points(CGPointSet_t* point_set);
+
+CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t type);
+
+CGError_t point_from_csv_line(CGPoint_t* point, char* csv_line, CGType_t type);
+>>>>>>> Stashed changes:include/libCGeo.h
 
 // reading .csv files
 CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file_pointer, CGType_t type);
@@ -159,6 +167,10 @@ double angle_between(CGPoint_t* initial_point, CGPoint_t* end_point);
 // Other calculations
 CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point_C);
 
+<<<<<<< Updated upstream:include/libCGeo/libCGeo.h
+=======
+CGPointSet_t* init_empty_point_set(int num_points);
+>>>>>>> Stashed changes:include/libCGeo.h
 
 //----------------------------------------------------------------
 // Function Definitions - Diagnostics

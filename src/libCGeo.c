@@ -119,7 +119,6 @@ CGError_t copy_point_set(CGPointSet_t* in_point_set, CGPointSet_t* out_point_set
  */
 CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t type){
     CGError_t status = CG_SUCCESS;
-
     if(point_set == NULL)
         return CG_INVALID_INPUT;
     else if(point_set->points == NULL)
