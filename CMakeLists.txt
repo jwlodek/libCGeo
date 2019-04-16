@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(libCGeo)
 
-set(CMAKE_BUILD_TARGET "Shared")
+set(CMAKE_BUILD_TARGET "Both")
 set(CMAKE_BUILD_TYPE "Debug")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -71,8 +71,13 @@ if(BUILD_EXAMPLES)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
     add_executable(diag_example example/diagnostics_example.c)
     add_executable(parse_example example/csv_reading_example.c)
-    target_link_libraries(diag_example m CGeo)
-    target_link_libraries(parse_example m CGeo)
+    if(WIN32)
+        target_link_libraries(diag_example CGeo)
+        target_link_libraries(parse_example CGeo)
+    else()
+        target_link_libraries(diag_example m CGeo)
+        target_link_libraries(parse_example m CGeo)
+    endif()
 endif()
 
 find_package(PkgConfig)
@@ -101,7 +106,11 @@ if(BUILD_UTESTS)
 endif()
 
 if(BUILD_CGEO_SHARED)
-    target_link_libraries(CGeo m)
+    if(WIN32)
+        target_link_libraries(CGeo)
+    else()
+        target_link_libraries(CGeo m)
+    endif()
 endif()
 
 
