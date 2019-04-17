@@ -26,3 +26,39 @@
  * This example program demonstrates the computation of the convex hull using
  * the various supported algorithms in libCGeo
  */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "libCGeo/libCGeo.h"
+
+int main(int argc, char** argv){
+
+    if(argc != 2){
+        print_cg_error(CG_INVALID_INPUT, "main");
+        return -1;
+    }
+
+    const char* input_test_file = argv[1];
+    FILE* input = fopen(input_test_file, "r");
+
+    if(input == NULL){
+        print_cg_error(CG_NO_FILE, "main");
+        return -1;
+    }
+
+    CGPointSet_t* point_set = init_point_set(7);
+    printf("Initialized empty point set\n");
+    if(point_set_from_csv_file(point_set, input, CG_INT) != CG_SUCCESS){
+        print_cg_error(CG_INVALID_INPUT, "point_set_from_csv_file");
+        return -1;
+    }
+
+    printf("Points read from input file ... \n");
+    print_points(point_set);
+    printf("---------------------------\n");
+    CGPointSet_t* convexHull = compute_graham_scan(point_set, CG_NO_DEGENERACY);
+    //CGError_t status = compute_convex_hull(point_set, convexHull, CG_GRAHAM_SCAN, CG_NO_DEGENERACY);
+
+    printf("ConvexHull of input is:\n");
+    print_points(convexHull);
+}
