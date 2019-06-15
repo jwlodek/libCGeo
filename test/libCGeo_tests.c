@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *********************************************************************************/
+
 /**
  * Unit tests for the common functionality for libCGeo used by multiple modules.
  */
