@@ -53,6 +53,8 @@ int main(int argc, char** argv){
         return -1;
     }
 
+    fclose(input);
+    
     printf("Points read from input file ... \n");
     print_points(point_set);
     printf("---------------------------\n");
