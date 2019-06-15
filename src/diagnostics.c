@@ -92,8 +92,7 @@ void print_cg_error(CGError_t error, const char* function_name){
  * @return status SUCCESS or INVALID_INPUT
  */
 CGError_t print_point(CGPoint_t* point){
-    CGError_t status = print_point_to_file(point, stdout, CG_MIN);
-    return status;
+    print_point_to_file(point, stdout, CG_MIN);
 }
 
 
@@ -105,45 +104,22 @@ CGError_t print_point(CGPoint_t* point){
  * @param desc_detail Flag specifying how much point information to print.
  * @return The appropriate error/success code.
  */
-CGError_t print_point_to_file(CGPoint_t* point, FILE* fp, CGDescDetail_t desc_detail){
+void print_point_to_file(CGPoint_t* point, FILE* fp, CGDescDetail_t desc_detail){
     const char* function_name = "print_point_to_file";
-    int result;
     switch(desc_detail){
         case CG_MIN:
-            if(point->type == CG_INT)
-                result = fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
-            else
-				result = fprintf(fp, "x: %lf, y: %lf\n", point->xcoord, point->ycoord);
+            fprintf(fp, "x: %lf, y: %lf\n", point->xcoord, point->ycoord);
             break;
         case CG_VERBOSE:
-            if(point->type == CG_INT){
-				result = fprintf(fp, "CG_INT type point with coords:\n");
-				result = fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
-            }
-            else{
-				result = fprintf(fp, "CG_FLOAT type point with coords:\n");
-				result = fprintf(fp, "x: %lf, y: %lf\n", point->xcoord, point->ycoord);
-            }
-			break;
         case CG_FULL:
-            if(point->type == CG_INT){
-                result = fprintf(fp, "CG_INT type point with coords:\n");
-				result = fprintf(fp, "x: %d, y: %d\n", (int) point->xcoord, (int) point->ycoord);
-            }
-            else{
-                result = fprintf(fp, "CG_FLOAT type point with coords:\n");
-				result = fprintf(fp, "x: %lf, y: %lf\n", point->xcoord, point->ycoord);
-            }
+            fprintf(fp, "x: %lf, y: %lf\n", point->xcoord, point->ycoord);
             fprintf(fp, "Sort by: %s, with value: %lf\n", point->sort_val_desc, point->sort_val);
             fprintf(fp,"------------------------------\n");
             break;
-		default:
-			print_cg_error(CG_INVALID_INPUT, function_name);
-			result = -1;
-			break;
+        default:
+            print_cg_error(CG_INVALID_INPUT, function_name);
+            break;
     }
-	if (result != 0) return CG_INVALID_INPUT;
-	else return CG_SUCCESS;
 }
 
 
@@ -154,8 +130,7 @@ CGError_t print_point_to_file(CGPoint_t* point, FILE* fp, CGDescDetail_t desc_de
  * @return The appropriate error code
  */
 CGError_t print_points(CGPointSet_t* point_set){
-    CGError_t status = print_points_to_file(point_set, stdout, CG_MIN);
-    return status;
+    print_points_to_file(point_set, stdout, CG_MIN);
 }
 
 
@@ -166,29 +141,23 @@ CGError_t print_points(CGPointSet_t* point_set){
  * @param fp File pointer of file in which to write
  * @return The appropriate error code
  */
-CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp, CGDescDetail_t desc_detail){
-    CGError_t status = CG_SUCCESS;
+void print_points_to_file(CGPointSet_t* point_set, FILE* fp, CGDescDetail_t desc_detail){
     const char* function_name = "print_points_to_file";
 
     // if stream NULL print to error
     if(fp == NULL) fp = stderr;
 
-    if(point_set == NULL){
-        return CG_INVALID_INPUT;
-    }
-    else if(point_set->points == NULL || point_set->num_points == 0){
-        return CG_INVALID_INPUT;
-    }
+    if(point_set == NULL)
+        print_cg_error(CG_INVALID_INPUT, function_name);
+    else if(point_set->head == NULL || point_set->num_points == 0)
+        print_cg_error(CG_POINTS_TOO_FEW, function_name);
     else{
-        int i;
-        for(i = 0; i < point_set->num_points; i++){
-            if(point_set->points+i == NULL){
-                return CG_INVALID_INPUT;
-            }
-            print_point_to_file(point_set->points+i, fp, desc_detail);
+        CGPointNode_t* current_node = point_set->head;
+        while(current_node->next != NULL){
+            print_point_to_file(current_node->point, fp, desc_detail);
+            current_node = current_node->next;
         }
     }
-	return CG_SUCCESS;
 }
 
 
@@ -204,23 +173,15 @@ CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp, CGDescDetail_t
  * @param type Type of points to be written into the point set
  * @return INVALID_INPUT if point set is uninitialized or empty, otherwise SUCCESS.
  */
-CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type){
+CGError_t generate_random_point_set(CGPointSet_t* point_set, int num_points){
     if(point_set == NULL)
-        return CG_INVALID_INPUT;
-    else if(point_set->num_points == 0 || point_set->points == NULL)
         return CG_INVALID_INPUT;
     int i;
     srand(time(NULL));
-    for(i = 0; i < point_set->num_points; i++){
-        if(type == CG_INT){
-            point_set->points[i].xcoord = (int) (((double) rand()/RAND_MAX*2 - 1) * 100);
-            point_set->points[i].ycoord = (int) (((double) rand()/RAND_MAX*2 - 1) * 100);
-        }
-        else{
-            point_set->points[i].xcoord = ((double) rand()/RAND_MAX*2.0 - 1.0) * 100.0;
-            point_set->points[i].ycoord = ((double) rand()/RAND_MAX*2.0 - 1.0) * 100.0;
-        }
-        point_set->points[i].type = type;
+    for(i = 0; i < num_points; i++){
+        int xcoord = ((int) rand()/RAND_MAX*2.0 - 1.0) * 100.0;
+        int ycoord = ((int) rand()/RAND_MAX*2.0 - 1.0) * 100.0;
+        add_coords_to_set(point_set, (double) xcoord, (double) ycoord);
     }
     return CG_SUCCESS;
 }
@@ -234,11 +195,9 @@ CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type){
  * @return 0 if the two points are the same, otherwise -1
  */
 int compare_points(CGPoint_t* point_A, CGPoint_t* point_B){
-    if(point_A->xcoord != point_B->xcoord)
+    if(fabs(point_A->xcoord - point_B->xcoord) > FLOAT_TOLERANCE)
         return -1;
-    else if(point_A->ycoord != point_B->ycoord)
-        return -1;
-    else if(point_A->type != point_B->type)
+    else if(fabs(point_A->ycoord - point_B->ycoord) > FLOAT_TOLERANCE)
         return -1;
     else
         return 0;
@@ -257,10 +216,13 @@ int compare_point_sets(CGPointSet_t* point_set_A, CGPointSet_t* point_set_B){
     else{
         if(point_set_A->num_points != point_set_B->num_points)
             return -1;
-        int i;
-        for(i = 0; i < point_set_A->num_points; i++){
-            if(compare_points(&(point_set_A->points[i]), &(point_set_B->points[i])) != 0)
+        CGPointNode_t* current_node_A = point_set_A->head;
+        CGPointNode_t* current_node_B = point_set_B->head;
+        while(current_node_A != NULL){
+            if(compare_points(current_node_A->point, current_node_B->point) != 0)
                 return -1;
+            current_node_A = current_node_A->next;
+            current_node_B = current_node_B->next;
         }
         return 0;
     }

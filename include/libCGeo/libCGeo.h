@@ -32,6 +32,10 @@
 #define LIBCGEO_H
 
 
+// Tolerance to account for double precision roundoff errors
+#define FLOAT_TOLERANCE 0.000001
+
+
 // include files
 #include <stdio.h>
 #include <stdio.h>
@@ -139,20 +143,21 @@ typedef struct CG_PointSet {
 //----------------------------------------------------------------
 
 
-// Init and free point sets
+// Basic point set operations
 CGPointSet_t* init_point_set();
 CGError_t add_coords_to_set(CGPointSet_t* point_set, double xCoord, double yCoord);
 CGError_t add_point_to_set(CGPointSet_t* point_set, CGPoint_t* point);
 CGPoint_t* get_point_at_index(CGPointSet_t* point_set, int index);
 CGError_t free_point_set(CGPointSet_t* point_set);
 
-// reading .csv files
+// reading / writing .csv files
 CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file_pointer);
 CGError_t csv_file_from_point_set(CGPointSet_t* point_set, FILE* file_pointer);
 
 // sorting points (uses merge-sort)
 CGError_t sort_point_set(CGPointSet_t* point_set, CGPointSet_t* output_point_set);
-CGError_t sort_points(CGPoint_t* points, int left_index, int right_index);
+CGError_t sort_points(CGPointNode_t** phead);
+void split_lists(CGPointNode_t* head, CGPointNode_t** left_list, CGPointNode_t** right_list);
 CGPointNode_t* merge_halves(CGPointNode_t* left_list, CGPointNode_t* right_list);
 
 // Point operations and calculations
@@ -181,8 +186,8 @@ CGError_t print_points_to_file(CGPointSet_t* point_set, FILE* fp, CGDescDetail_t
 int compare_point_sets(CGPointSet_t* point_set_A, CGPointSet_t* point_set_B);
 int compare_points(CGPoint_t* point_A, CGPoint_t* point_B);
 
-// random point generation for testing
-CGError_t generate_random_point_set(CGPointSet_t* point_set, CGType_t type);
+// random point generation for testing (ints only)
+CGError_t generate_random_point_set(CGPointSet_t* point_set, int num_points);
 
 
 //----------------------------------------------------------------
