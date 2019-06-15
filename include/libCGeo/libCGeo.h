@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *********************************************************************************/
+
 /**
  * This is the main header file for libCGeo. It contains all definitions of data structures used by all of the
  * library, in addition to all function definitions for the library.
@@ -40,17 +41,6 @@
 //----------------------------------------------------------------
 // Enums and Types
 //----------------------------------------------------------------
-
-
-/** 
- * Enum that specifies degree of precision.
- * libCGeo supports treating points with integer precision as well as floating point precision
- * @ingroup pttypes
- */
-typedef enum CG_DTYP {
-    CG_INT,   /**< Integer precision */
-    CG_FLOAT  /**< Floating point precision */
-} CGType_t;
 
 
 /**
@@ -119,8 +109,18 @@ typedef struct CG_Point {
     double ycoord;          /**< Double y-coordinate */
     double sort_val;        /**< Double value used for sorting points */
     char* sort_val_desc;    /**< Description of what measurement is stored in the sort_val */
-    CGType_t type;          /**< Data type used by point, int or double */
 } CGPoint_t;
+
+
+/**
+ * Struct representing a node containing a point in a doubly linked list.
+ * Contains pointers to previous and next point node elements
+ */
+typedef struct CG_PointNode {
+    CGPoint_t* point;               /**< Point stored in the node */
+    struct CG_PointNode* next;      /**< Next Node in linked list */
+    struct CG_PointNode* prev;      /**< Previous node in linked list */
+} CGPointNode_t;
 
 
 /**
@@ -128,8 +128,9 @@ typedef struct CG_Point {
  * Contains pointer to array of points and a counter for the number of points
  */
 typedef struct CG_PointSet {
-    CGPoint_t* points;      /**< Pointer to array of points */
-    int num_points;         /**< Count of number of points */
+    CGPointNode_t* head;        /**< Pointer to head node of Linked list of points */
+    CGPointNode_t* tail;        /**< Pointer to the tail node of Linked list of points */
+    int num_points;             /**< Count of number of points */
 } CGPointSet_t;
 
 
@@ -139,17 +140,20 @@ typedef struct CG_PointSet {
 
 
 // Init and free point sets
-CGPointSet_t* init_point_set(int num_points);
+CGPointSet_t* init_point_set();
+CGError_t add_coords_to_set(CGPointSet_t* point_set, double xCoord, double yCoord);
+CGError_t add_point_to_set(CGPointSet_t* point_set, CGPoint_t* point);
+CGPoint_t* get_point_at_index(CGPointSet_t* point_set, int index);
 CGError_t free_point_set(CGPointSet_t* point_set);
 
 // reading .csv files
-CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file_pointer, CGType_t type);
+CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file_pointer);
 CGError_t csv_file_from_point_set(CGPointSet_t* point_set, FILE* file_pointer);
 
 // sorting points (uses merge-sort)
 CGError_t sort_point_set(CGPointSet_t* point_set, CGPointSet_t* output_point_set);
 CGError_t sort_points(CGPoint_t* points, int left_index, int right_index);
-CGError_t merge_halves(CGPoint_t* points, int left_index, int center_index, int right_index);
+CGPointNode_t* merge_halves(CGPointNode_t* left_list, CGPointNode_t* right_list);
 
 // Point operations and calculations
 double distance_between(CGPoint_t* point_A, CGPoint_t* point_B);

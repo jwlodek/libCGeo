@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *********************************************************************************/
+
 /**
  * @defgroup pttypes Points and Point Sets
  * @breif Initialize point sets, points, and point set Data Structures.
@@ -45,23 +46,61 @@
 
 
 /**
- * Function that initializes a point set with a set of empty points.
+ * Function that initializes an empty point set point set
  * @ingroup pttypes
- * @param num_points The number of empty points to place in the set.
- * @return NULL if num_points is invalid, otherwise pointer to allocated point set.
+ * @return pointer to allocated point set.
  */
-CGPointSet_t* init_point_set(int num_points){
-    if(num_points <= 0){
-        return NULL;
-    }
-    else{
-        CGPointSet_t* point_set = (CGPointSet_t*) calloc(1, sizeof(CGPointSet_t));
-        point_set->num_points = num_points;
-        point_set->points = (CGPoint_t*) calloc(1, point_set->num_points * sizeof(CGPoint_t));
-        return point_set;
-    }
+CGPointSet_t* init_point_set(){
+    CGPointSet_t* point_set = (CGPointSet_t*) calloc(1, sizeof(CGPointSet_t));
+    point_set->num_points = 0;
+    return point_set;
 }
 
+
+CGError_t add_coords_to_set(CGPointSet_t* point_set, double xCoord, double yCoord){
+    CGPoint_t* point = malloc(sizeof(CGPoint_t));
+    point->xcoord = xCoord;
+    point->ycoord = yCoord;
+    CGError_t err = add_point_to_set(point_set, point);
+    if(err != CG_SUCCESS)
+        free(point);
+    return err;
+}
+
+
+CGError_t add_point_to_set(CGPointSet_t* point_set, CGPoint_t* point){
+    if(point_set == NULL || point == NULL) return CG_INVALID_INPUT;
+    else {
+        CGPointNode_t* pnode = (CGPointNode_t*) malloc(sizeof(CGPointNode_t));
+        pnode->point = point;
+        if(point_set->head == NULL){
+            point_set->head = pnode;
+            point_set->tail = pnode;
+        }
+        else{
+            pnode->prev = point_set->tail;
+            point_set->tail->next = pnode;
+            point_set->tail = pnode;
+        }
+        point_set->num_points++;
+    }
+    return CG_SUCCESS;
+}
+
+
+CGPoint_t* get_point_at_index(CGPointSet_t* point_set, int index){
+    if(point_set->num_points <= index)
+        return NULL;
+    CGPointNode_t* current_node = point_set->head;
+    int i;
+    for(i = 0; i< index; i++){
+        current_node = current_node->next;
+        if(current_node == NULL){
+            return NULL;
+        }
+    }
+    return current_node->point;
+}
 
 /**
  * Function that frees memory allocated by init_point_set.
@@ -72,10 +111,16 @@ CGPointSet_t* init_point_set(int num_points){
 CGError_t free_point_set(CGPointSet_t* point_set){
     if(point_set == NULL)
         return CG_INVALID_INPUT;
-    else if(point_set->points == NULL)
+    else if(point_set->head == NULL || point_set->tail == NULL)
         return CG_INVALID_INPUT;
     else{
-        free(point_set->points);
+        CGPointNode_t* current = point_set->head;
+        while(current != NULL){
+            free(current->point);
+            CGPointNode_t* temp = current->next;
+            free(current);
+            current = temp;
+        }
         free(point_set);
         return CG_SUCCESS;
     }
@@ -92,12 +137,13 @@ CGError_t free_point_set(CGPointSet_t* point_set){
 CGError_t copy_point_set(CGPointSet_t* in_point_set, CGPointSet_t* out_point_set){
     if(in_point_set == NULL || out_point_set == NULL)
         return CG_INVALID_INPUT;
-    else if(in_point_set->num_points != out_point_set->num_points)
-        return CG_INVALID_INPUT;
     else{
-        int i;
-        for(i = 0; i < in_point_set->num_points; i++){
-            out_point_set->points[i] = in_point_set->points[i];
+        CGPointNode_t* current_node = in_point_set->head;
+        while(current_node != NULL){
+            CGPoint_t* point = malloc(sizeof(CGPoint_t));
+            memcpy((void*) point, (void*) current_node->point, sizeof(CGPoint_t));
+            add_point_to_set(out_point_set, point);
+            current_node = current_node->next;
         }
         return CG_SUCCESS;
     }
@@ -117,39 +163,25 @@ CGError_t copy_point_set(CGPointSet_t* in_point_set, CGPointSet_t* out_point_set
  * @param type Type of points stored in file (int, float)
  * @return Success if read without error, error if num_points invalid or point_set non-empty.
  */
-CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t type){
+CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file){
     CGError_t status = CG_SUCCESS;
     if(point_set == NULL)
         return CG_INVALID_INPUT;
-    else if(point_set->points == NULL)
+    else if(point_set->head == NULL || point_set->tail == NULL)
         return CG_INVALID_INPUT;
     else if(file == NULL)
         return CG_NO_FILE;
 
     char* buffer = (char*) calloc(1, LINE_BUFFER);
+
     int counter = 0;
     while(fgets(buffer, LINE_BUFFER, file) != NULL){
-        if(counter == point_set->num_points)
-            break;
-        char* token = (char*) strtok(buffer, ",");
-        point_set->points[counter].type = type;
-        if(type == CG_INT)
-            point_set->points[counter].xcoord = (int) strtod(token, NULL);
-        else
-            point_set->points[counter].xcoord = (int) strtod(token, NULL);
-        token = (char*) strtok(NULL, "\n");
-        if(type == CG_INT)
-            point_set->points[counter].ycoord = strtod(token, NULL);
-        else
-            point_set->points[counter].ycoord = strtod(token, NULL);
-
-        counter++;
+        //char* token = (char*) strtok(buffer, ',');
+        if(strlen(buffer) > 0){
+            printf(buffer);
+        }
     }
     free(buffer);
-    if(status == CG_SUCCESS && counter != point_set->num_points){
-        printf("%d\n", counter);
-        status = CG_INVALID_INPUT;
-    }
     return status;
 }
 
@@ -164,12 +196,10 @@ CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file, CGType_t 
 CGError_t csv_file_from_point_set(CGPointSet_t* point_set, FILE* file_pointer){
     if(point_set == NULL || file_pointer == NULL)
         return CG_INVALID_INPUT;
-    int i;
-    for(i = 0; i < point_set->num_points; i++){
-        if(point_set->points[i].type == CG_INT)
-            fprintf(file_pointer, "%d,%d\n", (int) point_set->points[i].xcoord, (int) point_set->points[i].ycoord);
-        else
-            fprintf(file_pointer, "%lf,%lf\n", point_set->points[i].xcoord, point_set->points[i].ycoord);
+    CGPointNode_t* current_node = point_set->head;
+    while(current_node != NULL){
+        fprintf(file_pointer, "%lf,%lf\n", current_node->point->xcoord, current_node->point->ycoord);
+        current_node = current_node->next;
     }
     return CG_SUCCESS;
 }
@@ -207,15 +237,17 @@ CGPoint_t* find_lowest_point_in_set(CGPointSet_t* point_set){
         return NULL;
     else if(point_set->num_points == 0)
         return NULL;
-    CGPoint_t* point = &(point_set->points[0]);
-    int i;
-    for(i = 0; i < point_set->num_points; i++){
-        if(point_set->points[i].ycoord < point->ycoord){
-            point = &(point_set->points[i]);
+    CGPoint_t* point = point_set->head->point;
+    CGPointNode_t* current_node = point_set->head;
+    while(current_node != NULL){
+        if(current_node->point->ycoord < point->ycoord){
+            point = current_node->point;
         }
-        else if(point_set->points[i].ycoord == point->ycoord){
-            if(point_set->points[i].xcoord < point->xcoord) point = &(point_set->points[i]);
+        else if(current_node->point->ycoord == point->ycoord && 
+                current_node->point->xcoord < point->xcoord){
+                    point = current_node->point;
         }
+        current_node = current_node->next;
     }
     return point;
 }
@@ -273,18 +305,15 @@ double angle_between(CGPoint_t* initial_point, CGPoint_t* end_point){
 CGError_t sort_point_set(CGPointSet_t* point_set, CGPointSet_t* output_point_set){
     CGError_t status = CG_SUCCESS;
     if(point_set == NULL) return CG_INVALID_INPUT;
-    else if(point_set->points == NULL) return CG_INVALID_INPUT;
+    else if(point_set->head == NULL) return CG_INVALID_INPUT;
     else{
-        if(output_point_set == point_set || output_point_set == NULL){
-            status = sort_points(point_set->points, 0, point_set->num_points - 1);
+        if(output_point_set == NULL){
+            status = sort_points(&(point_set->head));
         }
         else{
-            if(point_set->num_points != output_point_set->num_points || output_point_set->points == NULL)
-                status = CG_INVALID_INPUT;
-            else{
-                copy_point_set(point_set, output_point_set);
-                status = sort_points(output_point_set->points, 0, output_point_set->num_points - 1);
-            }
+            status = copy_point_set(point_set, output_point_set);
+            if(status == CG_SUCCESS)
+                status = sort_points(&(output_point_set->head));
         }
         return status;
     }
@@ -294,23 +323,52 @@ CGError_t sort_point_set(CGPointSet_t* point_set, CGPointSet_t* output_point_set
 /**
  * Helper function that sorts array of points.
  * @ingroup setops
- * @param points Pointer to array of points to sort
- * @param left_index The starting point for left sub-array
- * @param right_index The starting point for the right sub-array
+ * @param phead Reference to the head node of the linked list of points
  * @return INVALID INPUT if points is null or left and right are invalid, otherwise success.
  */
-CGError_t sort_points(CGPoint_t* points, int left_index, int right_index){
-    if(left_index < right_index){
-        int center_index = left_index+((right_index - left_index)/2);
-        CGError_t status_left = sort_points(points, left_index, center_index);
-        CGError_t status_right = sort_points(points, center_index + 1, right_index);
+CGError_t sort_points(CGPointNode_t** phead){
 
-        CGError_t status_merge = merge_halves(points, left_index, center_index, right_index);
-        return status_merge;
-    }
-    return CG_INVALID_INPUT;
+    CGPointNode_t* head = *phead;
+    CGPointNode_t* left_list;
+    CGPointNode_t* right_list;
+
+    if(head == NULL) return CG_INVALID_INPUT;
+    else if (head->next == NULL) return CG_SUCCESS;
+
+    split_lists(head, &left_list, &right_list);
+
+    sort_points(&left_list);
+    sort_points(&right_list);
+
+    CGPointNode_t* temp = merge_halves(left_list, right_list);
+    if(temp == NULL)
+        return CG_INVALID_INPUT;
+    *phead = temp;
+    return CG_SUCCESS;
 }
 
+
+void split_lists(CGPointNode_t* head, CGPointNode_t** left, CGPointNode_t** right){
+    CGPointNode_t* two_step;
+    CGPointNode_t* one_step;
+    one_step = head;
+    two_step = head->next;
+
+    // Jump two steps with one pointer, one step with the other.
+    // When two step reaches end, one step is halfway
+    while(two_step != NULL) {
+        two_step = two_step->next;
+        if(two_step != NULL){
+            one_step = one_step->next;
+            two_step = two_step->next;
+        }
+    }
+
+    *left = head;
+    *right = one_step;
+    //detatch the lists
+    one_step->next = NULL;
+}
 
 /**
  * Function that implements merge-sort merging for Points array.
@@ -321,54 +379,21 @@ CGError_t sort_points(CGPoint_t* points, int left_index, int right_index){
  * @param right_index index of the right sub-array
  * @return CG_INVALID_INPUT if error occurs, otherwise, CG_SUCCESS
  */
-CGError_t merge_halves(CGPoint_t* points, int left_index, int center_index, int right_index){
-    int left_counter, right_counter, merge_index;
+CGPointNode_t* merge_halves(CGPointNode_t* left_list, CGPointNode_t* right_list){
+    if(left_list == NULL && right_list == NULL)
+        return NULL;
 
-    int left_sub_length = center_index - left_index + 1;
-    int right_sub_length = right_index - center_index;
+    CGPointNode_t* result_head = NULL;
+    if(left_list == NULL) return right_list;
+    else if(right_list == NULL) return left_list;
 
-	CGPoint_t* temp_left_array = (CGPoint_t*)malloc(left_sub_length * sizeof(CGPoint_t));
-	CGPoint_t* temp_right_array = (CGPoint_t*)malloc(right_sub_length * sizeof(CGPoint_t));
-
-
-    for(left_counter = 0; left_counter < left_sub_length; left_counter++){
-        if(points[left_index + left_counter].sort_val_desc == NULL) return CG_INVALID_INPUT;
-        temp_left_array[left_counter] = points[left_index + left_counter];
+    if(left_list->point->sort_val <= right_list->point->sort_val) {
+        result_head = left_list;
+        result_head->next = merge_halves(left_list->next, right_list);
     }
-
-    for(right_counter = 0; right_counter < right_sub_length; right_counter++){
-        if(points[center_index + 1 + right_counter].sort_val_desc == NULL) return CG_INVALID_INPUT;
-        temp_right_array[right_counter] = points[center_index + 1 + right_counter];
+    else{
+        result_head = right_list;
+        result_head->next = merge_halves(left_list, right_list->next);
     }
-
-    left_counter = 0;
-    right_counter = 0;
-    merge_index = left_index;
-
-    while(left_counter < left_sub_length && right_counter < right_sub_length){
-        if(temp_left_array[left_counter].sort_val <= temp_right_array[right_counter].sort_val){
-            points[merge_index] = temp_left_array[left_counter];
-            left_counter++;
-        }
-        else{
-            points[merge_index] = temp_right_array[right_counter];
-            right_counter++;
-        }
-        merge_index++;
-    }
-
-    while(left_counter < left_sub_length){
-        points[merge_index] = temp_left_array[left_counter];
-        left_counter++;
-        merge_index++;
-    }
-    while(right_counter < right_sub_length){
-        points[merge_index] = temp_right_array[right_counter];
-        right_counter++;
-        merge_index++;
-    }
-
-	free(temp_left_array);
-	free(temp_right_array);
-    return CG_SUCCESS;
+    return result_head;
 }

@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *********************************************************************************/
+
 /**
  * This is the source file that contains implementations of all functions specific to
  * computing the convex hull of a point set
