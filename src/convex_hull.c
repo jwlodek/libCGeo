@@ -30,32 +30,35 @@
  * @breif Functions and data types used by libCGeo for finding the Convex Hull of a Point Set.
  */
 
+
 #include "libCGeo/libCGeo.h"
+
 
 /**
  * Function that computes the angle of each point with the lowest point in the set.
  * @ingroup chull
  * @param point_set Point set for which to compute angles
- * @return INVALID_INPUT if input is null or angle cannot be computed, otherwise SUCCESS
+ * @return INVALID_INPUT if input is null or angle cannot be computed, 
+ *      POINTS_TO_FEW  if the point set is empty, otherwise SUCCESS
  */
 CGError_t compute_point_angles(CGPointSet_t* point_set){
     if(point_set == NULL)
         return CG_INVALID_INPUT;
-    else if(point_set->num_points == 0 || point_set->points == NULL)
-        return CG_INVALID_INPUT;
+    else if(point_set->num_points == 0 || point_set->head == NULL)
+        return CG_POINTS_TOO_FEW;
     else{
         CGPoint_t* lowest_point = find_lowest_point_in_set(point_set);
         // angles in radians between 0 and pi, lowest point gets -1
         lowest_point->sort_val = -1;
         lowest_point->sort_val_desc = "lowest_point";
-        int i;
-        for(i = 0; i < point_set->num_points; i++){
-            if(point_set->points + i != lowest_point){
-                double angle = angle_between(lowest_point, &(point_set->points[i]));
+        CGPointNode_t* current_node = point_set->head;
+        while(current_node != NULL){
+            if(current_node->point != lowest_point){
+                double angle = angle_between(lowest_point, current_node->point);
                 if(angle < 0)
                     return CG_INVALID_INPUT;
-                point_set->points[i].sort_val = angle;
-                point_set->points[i].sort_val_desc = "angle with lowest point";
+                current_node->point->sort_val = angle;
+                current_node->point->sort_val_desc = "angle with lowest point";
             }
         }
         return CG_SUCCESS;
@@ -69,40 +72,42 @@ CGError_t compute_point_angles(CGPointSet_t* point_set){
  * over points and check if they make an inline turn. If yes, skip over them.
  * Once iteration is done, check if last 3 points consist of a colinear degeneracy
  * @ingroup chull
- * @param point_set Point set containing calculated convex hull
+ * @param input_set Point set containing calculated convex hull
+ * @param output_set Initialized but empty point set that will contain the convex hull without colinear degeneracies
  * @return NULL if error encountered, otherwise point_set with colinear points removed.
  */
-CGPointSet_t* remove_colinear_degeneracies(CGPointSet_t* point_set){
-    CGPointSet_t* no_degeneracy = init_point_set(point_set->num_points);
-    int i = 0;
-    int j = 1;
-    int k = 2;
-    int counter = 1;
-    no_degeneracy->points[0] = point_set->points[0];
-    while(k < point_set->num_points){
-        CGTurn_t turn_type = find_turn_type(&(point_set->points[i]), &(point_set->points[j]), &(point_set->points[k]));
-        if(turn_type != CG_TURN_INLINE){
-            no_degeneracy->points[counter] = point_set->points[j];
-            counter++;
-            i = j;
-            j = k;
-            k++;
-        }
-        else{
-            j = k;
-            k++;
-        }
-        if(k == point_set->num_points){
-            CGTurn_t wrap_around = find_turn_type(&(point_set->points[i]), &(point_set->points[j]), &(point_set->points[0]));
-            if(wrap_around != CG_TURN_INLINE){
-                no_degeneracy->points[counter] = point_set->points[j];
-                counter++;
+CGError_t remove_colinear_degeneracies(CGPointSet_t* input_set, CGPointSet_t* output_set){
+    CGError_t status = CG_SUCCESS;
+    if (input_set == NULL || output_set == NULL) status = CG_INVALID_INPUT;
+    else if(input_set->num_points < 3) {
+        status = CG_POINTS_TOO_FEW;
+    }
+    else{
+        CGPointNode_t* input_node_A = input_set->head;
+        CGPointNode_t* input_node_B = input_node_A->next;
+        CGPointNode_t* input_node_C = input_node_B->next;
+        add_point_to_set(output_set, input_node_A->point);
+        while(input_node_C != NULL){
+            CGTurn_t turn_type = find_turn_type(input_node_A->point, input_node_B->point, input_node_C->point);
+            if(turn_type != CG_TURN_INLINE){
+                
+                input_node_A = input_node_B;
+                input_node_B = input_node_C;
+                input_node_C = input_node_C->next;
+            }
+            else{
+                input_node_B = input_node_C;
+                input_node_C = input_node_C->next;
+            }
+            if(input_node_C == NULL){
+                CGTurn_t wrap_around = find_turn_type(input_node_A->point, input_node_B->point, input_set->head->point);
+                if(wrap_around != CG_TURN_INLINE){
+                    add_point_to_set(output_set, input_node_B->point);
+                }
             }
         }
     }
-    no_degeneracy->num_points = counter;
-    realloc(no_degeneracy->points, no_degeneracy->num_points * sizeof(CGPoint_t));
-    return no_degeneracy;
+    return status;
 }
 
 
@@ -116,46 +121,74 @@ CGPointSet_t* remove_colinear_degeneracies(CGPointSet_t* point_set){
  * @param compute_type Flag to toggle between handling degeneracies or not.
  * @return NULL if invalid inputs or error, otherwise CGPointSet_t with convex hull.
  */
-CGPointSet_t* compute_graham_scan(CGPointSet_t* point_set, CGCompute_t compute_type){
-    if(point_set == NULL)
-        return NULL;
-    else if(point_set->num_points == 0 || point_set->points == NULL)
-        return NULL;
+CGError_t compute_graham_scan(CGPointSet_t* point_set, CGPointSet_t* output_set, CGCompute_t compute_type){
+    // basic error checking
+    if(point_set == NULL || output_set == NULL)
+        return CG_INVALID_INPUT;
+    else if(point_set->num_points < 3 || point_set->head == NULL)
+        return CG_POINTS_TOO_FEW;
 
-    CGPointSet_t* stack_set = init_point_set(point_set->num_points);
+    // find angles w.r.t. lowest point
     CGError_t status;
     status = compute_point_angles(point_set);
     if(status != CG_SUCCESS)
-        return NULL;
+        return status;
+
+    CGPointSet_t* p_scratch = init_point_set();
+
+    // sort the points into a temp set
+    status = sort_point_set(point_set, p_scratch);
+    if(status != CG_SUCCESS){
+        free_point_set(p_scratch);
+        return status;
+    }
+
+    CGPointNode_t* p_stack = p_scratch->head;
+
+    // allocate a stack to keep track of the points we want.
+    CGPoint_t* stack = (CGPoint_t*) malloc(p_scratch->num_points * sizeof(CGPoint_t));
 
     // initialize the stack
-    int stack_top = 2;
-    CGPoint_t* stack = stack_set->points;
-    stack[0] = point_set->points[0];
-    stack[1] = point_set->points[1];
-    stack[2] = point_set->points[2];
+    stack[0] = *(p_stack->point);
+    stack[1] = *(p_stack->next->point);
+    stack[2] = *(p_stack->next->next->point);
+    p_stack = p_stack->next->next->next;
 
     // Main Graham scan algorithm loop
-    int i;
-    for(i = 0; i < point_set->num_points; i++){
-        while(find_turn_type(&(stack[stack_top - 1]), &(stack[stack_top]), &(point_set->points[i])) == CG_TURN_RIGHT){
-            stack_top = stack_top - 1;
+    int stack_counter = 2;
+    while(p_stack != NULL){
+        // until we find a left turn, continue to step back through the stack
+        while(find_turn_type(&stack[stack_counter - 1], &stack[stack_counter], p_stack->point) == CG_TURN_RIGHT){
+            stack_counter--;
         }
-        stack_top ++;
-        stack[stack_top] = point_set->points[i];
+        // when we find a left turn, increment the stack, and insert the point into it.
+        stack_counter++;
+        stack[stack_counter] = *(p_stack->point);
+        p_stack = p_stack->next;
     }
 
-    // resize the output set (not all points in original are in Convex Hull)
-    stack_set->num_points = stack_top + 1;
-    realloc(stack, stack_set->num_points * sizeof(CGPoint_t));
+    // write all of the points in the stack into the output set
+    int i;
+    for(i = 0; i< stack_counter + 1; i++){
+        add_point_to_set(output_set, &stack[i]);
+    }
 
+    // free memory
+    free(stack);
+    free_point_set(p_scratch);
+
+    // if we account for degeneracy, run the remove degeneracy function
     if(compute_type == CG_W_DEGENERACY){
-        CGPointSet_t* no_degeneracy =  remove_colinear_degeneracies(stack_set);
-        free_point_set(stack_set);
-        return no_degeneracy;
+        CGPointSet_t* p_no_degeneracy = init_point_set();
+        status = remove_colinear_degeneracies(output_set, p_no_degeneracy);
+        if(status == CG_SUCCESS){
+            CGPointSet_t* temp = output_set;
+            output_set = p_no_degeneracy;
+            free_point_set(output_set);
+        }
     }
-    else
-        return stack_set;
+
+    return status;
 }
 
 
@@ -169,18 +202,13 @@ CGPointSet_t* compute_graham_scan(CGPointSet_t* point_set, CGCompute_t compute_t
  * @return UNIMPLEMENTED if invalid chull method, INVALID_INPUT if failure, SUCCESS otherwise
  */
 CGError_t compute_convex_hull(CGPointSet_t* point_set, CGPointSet_t* output_set, CGConvexHull_t convex_hull_method, CGCompute_t compute_type){
-    CGPointSet_t* convex_hull;
+    CGError_t status;
     switch(convex_hull_method){
         case CG_GRAHAM_SCAN:
-            convex_hull = compute_graham_scan(point_set, compute_type);
+            status = compute_graham_scan(point_set, output_set, compute_type);
             break;
         default:
             return CG_UNIMPLEMENTED;
     }
-    if(convex_hull == NULL)
-        return CG_INVALID_INPUT;
-    else{
-        output_set = convex_hull;
-        return CG_SUCCESS;
-    }
+    return status;
 }

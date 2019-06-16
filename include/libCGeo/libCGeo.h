@@ -196,8 +196,8 @@ CGError_t generate_random_point_set(CGPointSet_t* point_set, int num_points);
 
 
 CGError_t compute_point_angles(CGPointSet_t* point_set);
-CGPointSet_t* compute_graham_scan(CGPointSet_t* input_set, CGCompute_t compute_type);
-CGPointSet_t* remove_colinear_degeneracies(CGPointSet_t* input_set);
+CGError_t compute_graham_scan(CGPointSet_t* input_set, CGPointSet_t* output_set, CGCompute_t compute_type);
+CGError_t remove_colinear_degeneracies(CGPointSet_t* input_set, CGPointSet_t* output_set);
 CGError_t compute_convex_hull(CGPointSet_t* point_set, CGPointSet_t* output_set, CGConvexHull_t convex_hull_method, CGCompute_t compute_type);
 
 
