@@ -32,15 +32,23 @@
 #define LIBCGEO_H
 
 
-// Tolerance to account for double precision roundoff errors
-#define FLOAT_TOLERANCE 0.000001
-
-
 // include files
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+
+//----------------------------------------------------------------
+// Constatnts
+//----------------------------------------------------------------
+
+// Tolerance to account for double precision roundoff errors
+#define FLOAT_TOLERANCE 0.000001
+
+// Message to print at start of examples
+#define INTRO_MESSAGE   "+------------------------------\n+ Welcome to libCGeo examples\n+ Author: Jakub Wlodek\n+ Created: 2019\n+ Licence: MIT\n+------------------------------\n"
+
 
 //----------------------------------------------------------------
 // Enums and Types
@@ -144,29 +152,29 @@ typedef struct CG_PointSet {
 
 
 // Basic point set operations
-CGPointSet_t* init_point_set();
-CGError_t add_coords_to_set(CGPointSet_t* point_set, double xCoord, double yCoord);
-CGError_t add_point_to_set(CGPointSet_t* point_set, CGPoint_t* point);
-CGPoint_t* get_point_at_index(CGPointSet_t* point_set, int index);
-CGError_t free_point_set(CGPointSet_t* point_set);
+CGPointSet_t*   init_point_set();
+CGError_t       add_coords_to_set(CGPointSet_t* point_set, double xCoord, double yCoord);
+CGError_t       add_point_to_set(CGPointSet_t* point_set, CGPoint_t* point);
+CGPoint_t*      get_point_at_index(CGPointSet_t* point_set, int index);
+CGError_t       free_point_set(CGPointSet_t* point_set);
 
 // reading / writing .csv files
-CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file_pointer);
-CGError_t csv_file_from_point_set(CGPointSet_t* point_set, FILE* file_pointer);
+CGError_t       point_set_from_csv_file(CGPointSet_t* point_set, FILE* file_pointer);
+CGError_t       csv_file_from_point_set(CGPointSet_t* point_set, FILE* file_pointer);
 
 // sorting points (uses merge-sort)
-CGError_t sort_point_set(CGPointSet_t* point_set, CGPointSet_t* output_point_set);
-CGError_t sort_points(CGPointNode_t** phead);
-void split_lists(CGPointNode_t* head, CGPointNode_t** left_list, CGPointNode_t** right_list);
-CGPointNode_t* merge_halves(CGPointNode_t* left_list, CGPointNode_t* right_list);
+CGError_t       sort_point_set(CGPointSet_t* point_set, CGPointSet_t* output_point_set);
+CGError_t       sort_points(CGPointNode_t** phead);
+void            split_lists(CGPointNode_t* head, CGPointNode_t** left_list, CGPointNode_t** right_list);
+CGPointNode_t*  merge_halves(CGPointNode_t* left_list, CGPointNode_t* right_list);
 
 // Point operations and calculations
-double distance_between(CGPoint_t* point_A, CGPoint_t* point_B);
-CGPoint_t* find_lowest_point_in_set(CGPointSet_t* point_set);
-double angle_between(CGPoint_t* initial_point, CGPoint_t* end_point);
+double          distance_between(CGPoint_t* point_A, CGPoint_t* point_B);
+CGPoint_t*      find_lowest_point_in_set(CGPointSet_t* point_set);
+double          angle_between(CGPoint_t* initial_point, CGPoint_t* end_point);
 
 // Other calculations
-CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point_C);
+CGTurn_t        find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point_C);
 
 
 //----------------------------------------------------------------
@@ -175,19 +183,19 @@ CGTurn_t find_turn_type(CGPoint_t* point_A, CGPoint_t* point_B, CGPoint_t* point
 
 
 // error printing
-void print_cg_error(CGError_t error, const char* function_name);
+void            print_cg_error(CGError_t error, const char* function_name);
 
 // point printing
-void print_point_to_file(CGPoint_t* point, FILE* fp, CGDescDetail_t desc_detail);
-void print_points(CGPointSet_t* point_set);
-void print_points_to_file(CGPointSet_t* point_set, FILE* fp, CGDescDetail_t desc_detail);
+void            print_point_to_file(CGPoint_t* point, FILE* fp, CGDescDetail_t desc_detail);
+void            print_points(CGPointSet_t* point_set);
+void            print_points_to_file(CGPointSet_t* point_set, FILE* fp, CGDescDetail_t desc_detail);
 
 // point set comparisons
-int compare_point_sets(CGPointSet_t* point_set_A, CGPointSet_t* point_set_B);
-int compare_points(CGPoint_t* point_A, CGPoint_t* point_B);
+int             compare_point_sets(CGPointSet_t* point_set_A, CGPointSet_t* point_set_B);
+int             compare_points(CGPoint_t* point_A, CGPoint_t* point_B);
 
 // random point generation for testing (ints only)
-CGError_t generate_random_point_set(CGPointSet_t* point_set, int num_points);
+CGError_t       generate_random_point_set(CGPointSet_t* point_set, int num_points);
 
 
 //----------------------------------------------------------------
@@ -195,10 +203,10 @@ CGError_t generate_random_point_set(CGPointSet_t* point_set, int num_points);
 //----------------------------------------------------------------
 
 
-CGError_t compute_point_angles(CGPointSet_t* point_set);
-CGError_t compute_graham_scan(CGPointSet_t* input_set, CGPointSet_t* output_set, CGCompute_t compute_type);
-CGError_t remove_colinear_degeneracies(CGPointSet_t* input_set, CGPointSet_t* output_set);
-CGError_t compute_convex_hull(CGPointSet_t* point_set, CGPointSet_t* output_set, CGConvexHull_t convex_hull_method, CGCompute_t compute_type);
+CGError_t       compute_point_angles(CGPointSet_t* point_set);
+CGError_t       compute_graham_scan(CGPointSet_t* input_set, CGPointSet_t* output_set, CGCompute_t compute_type);
+CGError_t       remove_colinear_degeneracies(CGPointSet_t* input_set, CGPointSet_t* output_set);
+CGError_t       compute_convex_hull(CGPointSet_t* point_set, CGPointSet_t* output_set, CGConvexHull_t convex_hull_method, CGCompute_t compute_type);
 
 
 //----------------------------------------------------------------

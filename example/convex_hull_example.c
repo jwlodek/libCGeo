@@ -34,10 +34,12 @@
 int main(int argc, char** argv){
 
     if(argc != 2){
+        printf("A file path is required.\n");
         print_cg_error(CG_INVALID_INPUT, "main");
         return -1;
     }
 
+    // get input csv file
     const char* input_test_file = argv[1];
     FILE* input = fopen(input_test_file, "r");
 
@@ -45,22 +47,29 @@ int main(int argc, char** argv){
         print_cg_error(CG_NO_FILE, "main");
         return -1;
     }
+    else{
+        // initialize input and output sets
+        CGPointSet_t* point_set = init_point_set();
+        CGPointSet_t* output_set = init_point_set();
+        printf("Initialized empty point set\n");
+        // read from file
+        if(point_set_from_csv_file(point_set, input) != CG_SUCCESS){
+            print_cg_error(CG_INVALID_INPUT, "point_set_from_csv_file");
+        }
+        else{
+            // compute graham scan convex hull
+            printf("Points read from input file ... \n");
+            print_points(point_set);
+            printf("---------------------------\n");
+            CGError_t status = compute_convex_hull(point_set, output_set, CG_GRAHAM_SCAN, CG_NO_DEGENERACY);
 
-    CGPointSet_t* point_set = init_point_set(7);
-    printf("Initialized empty point set\n");
-    if(point_set_from_csv_file(point_set, input, CG_INT) != CG_SUCCESS){
-        print_cg_error(CG_INVALID_INPUT, "point_set_from_csv_file");
-        return -1;
+            printf("ConvexHull of input is:\n");
+            print_points(output_set);
+        }
+        // free memory
+        fclose(input);
+        free_point_set(point_set);
+        free_point_set(output_set);
     }
-
-    fclose(input);
-    
-    printf("Points read from input file ... \n");
-    print_points(point_set);
-    printf("---------------------------\n");
-    CGPointSet_t* convexHull = compute_graham_scan(point_set, CG_NO_DEGENERACY);
-    //CGError_t status = compute_convex_hull(point_set, convexHull, CG_GRAHAM_SCAN, CG_NO_DEGENERACY);
-
-    printf("ConvexHull of input is:\n");
-    print_points(convexHull);
+    return 0;
 }

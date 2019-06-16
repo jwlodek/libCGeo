@@ -49,12 +49,12 @@ typedef struct CG_ERROR_MESSAGE {
 
 /** @internal */
 static const CGErrorMessage_t error_messages[] = {
-    {CG_SUCCESS, "Success"},
-    {CG_INVALID_TYPE  , "Invalid point type"},
-    {CG_POINTS_TOO_FEW, "Not enough points"},
-    {CG_INVALID_INPUT , "Invalid input"},
-    {CG_NO_FILE, "File cannot be opened, or does not exist"},
-    {CG_UNIMPLEMENTED, "Function has not yet been implemented"}
+    {CG_SUCCESS,            "Success"},
+    {CG_INVALID_TYPE,       "Invalid point type"},
+    {CG_POINTS_TOO_FEW,     "Not enough points"},
+    {CG_INVALID_INPUT,      "Invalid input"},
+    {CG_NO_FILE,            "File cannot be opened, or does not exist"},
+    {CG_UNIMPLEMENTED,      "Function has not yet been implemented"}
 };
 
 

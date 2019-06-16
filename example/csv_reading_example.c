@@ -34,9 +34,12 @@
 
 int main(int argc, char** argv){
 
+    printf(INTRO_MESSAGE);
+    printf("\nlibCGeo comma-separated-value (.csv) file parsing example program.\n");
 
     // First, we will parse the second command line argument the file path to a .csv file
     if(argc != 2){
+        printf("Need file path argument\n");
         print_cg_error(CG_INVALID_INPUT, "main");
         return -1;
     }
@@ -54,51 +57,52 @@ int main(int argc, char** argv){
     }
     
     // Initialize point set. My example input file has 7 points, so we init a point set with 7 spots
-    CGPointSet_t* point_set = init_point_set(7);
+    CGPointSet_t* point_set = init_point_set();
     printf("Initialized empty point set\n");
 
     // read into the point set from the input file
-    if(point_set_from_csv_file(point_set, input_file, CG_INT) != CG_SUCCESS){
+    if(point_set_from_csv_file(point_set, input_file) != CG_SUCCESS){
         print_cg_error(CG_INVALID_INPUT, "point_set_from_csv_file");
-        return -1;
     }
+    else{
+        // print out all of the points in the set
+        printf("Points read from the set are:\n");
+        print_points(point_set);
 
-    // print out all of the points in the set
-    printf("Points read from the set are:\n");
-    print_points(point_set);
+        // Find the lowest point in the point set
+        CGPoint_t* lowest = find_lowest_point_in_set(point_set);
+        fprintf(stdout, "The lowest point in the set is:\n");
+        print_point_to_file(lowest, stdout, CG_MIN);
+        fprintf(stdout, "------------------------\n");
 
-    // Find the lowest point in the point set
-    CGPoint_t* lowest = find_lowest_point_in_set(point_set);
-    fprintf(stdout, "The lowest point in the set is:\n");
-    print_point_to_file(lowest, stdout, CG_MIN);
-    fprintf(stdout, "------------------------\n");
+        // calculate the distance between each point and the lowest point
+        CGPointNode_t* current_node = point_set->head;
+        while(current_node != NULL){
+            current_node->point->sort_val = distance_between(current_node->point, lowest);
+            // Note that it is necessary to set the sort_val_desc value: if it is NULL, sorting will fail.
+            current_node->point->sort_val_desc = "Distance to lowest point";
+        }
 
-    // calculate the distance between each point and the lowest point
-    int i;
-    for(i = 0; i < point_set->num_points; i++){
-        point_set->points[i].sort_val = distance_between(&(point_set->points[i]), lowest);
-        // Note that it is necessary to set the sort_val_desc value: if it is NULL, sorting will fail.
-        point_set->points[i].sort_val_desc = "Distance to lowest point";
+        fprintf(stdout, "Points with sort values are:\n");
+        print_points_to_file(point_set, stdout, CG_FULL);
+
+        // sort the points 
+        CGError_t sort_status = sort_point_set(point_set, NULL);
+
+        // Error check
+        if(sort_status != CG_SUCCESS){
+            print_cg_error(CG_INVALID_INPUT, "sort_point_set");
+        }
+        else{
+            printf("The sorted points:\n");
+            print_points_to_file(point_set, stdout, CG_FULL);
+
+            // Print sorted point set to output file
+            if(csv_file_from_point_set(point_set, output_file) != CG_SUCCESS){
+                print_cg_error(CG_NO_FILE, "csv_file_from_point_set");
+            }
+        }
     }
-
-    fprintf(stdout, "Points with sort values are:\n");
-    print_points_to_file(point_set, stdout, CG_FULL);
-
-
-    // sort the points 
-    CGError_t sort_status = sort_point_set(point_set, NULL);
-
-    // Error check
-    if(sort_status != CG_SUCCESS){
-        print_cg_error(CG_INVALID_INPUT, "sort_point_set");
-    }
-
-    // Print sorted point set to output file
-    if(csv_file_from_point_set(point_set, output_file) != CG_SUCCESS){
-        print_cg_error(CG_NO_FILE, "csv_file_from_point_set");
-        return -1;
-    }
-
     // free up memory and exit
     free_point_set(point_set);
     fclose(input_file);

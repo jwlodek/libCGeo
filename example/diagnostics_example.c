@@ -34,38 +34,33 @@
 int main(int argc, char** argv){
 
     //initialize the point set
-    CGPointSet_t* point_set = init_point_set(3);
-    CGPointSet_t* point_set_random = init_point_set(12);
+    printf(INTRO_MESSAGE);
+    printf("\nlibCGeo diagnostics example program.\n");
 
-    // add values to the points
-    CGPoint_t* p1 = &(point_set->points[0]);
-    CGPoint_t* p2 = &(point_set->points[1]);
-    CGPoint_t* p3 = &(point_set->points[2]);
-    p1->type = CG_INT;
-    p2->type = CG_INT;
-    p3->type = CG_FLOAT;
-    p1->xcoord = 0;
-    p1->ycoord = 0;
-    p2->xcoord = 1;
-    p2->ycoord = 3;
-    p3->xcoord = 0.1;
-    p3->ycoord = 5.4;
+    // initialize two empty point sets
+    CGPointSet_t* point_set = init_point_set();
+    CGPointSet_t* point_set_random = init_point_set();
+
+    // add points to the first set by coord
+    add_coords_to_set(point_set, 0.0, 0.0);
+    add_coords_to_set(point_set, 1.5, -9.0);
+    add_coords_to_set(point_set, -12.0, 1.0);
 
     // generate a point set with 12 random points
-    CGError_t gen_status = generate_random_point_set(point_set_random, CG_INT);
+    CGError_t gen_status = generate_random_point_set(point_set_random, 12);
     printf("We have generated a random point set:\n");
-    print_points(point_set_random);
+    // print to a file stream with verbose detail
+    print_points_to_file(point_set_random, stdout, CG_VERBOSE);
 
     // print the point sin the set
     printf("Printing preconfigured point set:\n");
+    // print to stdout with minimum verbosity by default
     print_points(point_set);
 
-    // this will return an INVALID_INPUT Error
-    CGError_t err = print_points(NULL);
-
-    // this will print an invalid type error message
-    if(err != CG_SUCCESS)
-        print_cg_error(err, "print_points");
+    printf("Error information can be printed as follows:\n");
+    //prints out error information
+    CGError_t err = CG_INVALID_INPUT;
+    print_cg_error(err, "print_points");
 
     // free the point set
     free_point_set(point_set);
