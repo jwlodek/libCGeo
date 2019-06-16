@@ -167,21 +167,22 @@ CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file){
     CGError_t status = CG_SUCCESS;
     if(point_set == NULL)
         return CG_INVALID_INPUT;
-    else if(point_set->head == NULL || point_set->tail == NULL)
-        return CG_INVALID_INPUT;
     else if(file == NULL)
         return CG_NO_FILE;
 
-    char* buffer = (char*) calloc(1, LINE_BUFFER);
+    char buffer[LINE_BUFFER];
 
-    int counter = 0;
     while(fgets(buffer, LINE_BUFFER, file) != NULL){
-        //char* token = (char*) strtok(buffer, ',');
         if(strlen(buffer) > 0){
-            printf(buffer);
+            char* xstr = strtok(buffer, ",");
+            double xcoord = atof(xstr);
+            char* ystr = strtok(NULL, "\n");
+            if(ystr == NULL)
+                ystr = strtok(NULL, EOF);
+            double ycoord = atof(ystr);
+            add_coords_to_set(point_set, xcoord, ycoord);
         }
     }
-    free(buffer);
     return status;
 }
 
