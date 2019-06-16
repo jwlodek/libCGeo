@@ -89,9 +89,9 @@ void print_cg_error(CGError_t error, const char* function_name){
  * Simple function for printing basic point information to stdout
  * @ingroup diagnostics
  * @param point Pointer to the point to print.
- * @return status SUCCESS or INVALID_INPUT
+ * @return void
  */
-CGError_t print_point(CGPoint_t* point){
+void print_point(CGPoint_t* point){
     print_point_to_file(point, stdout, CG_MIN);
 }
 
@@ -102,7 +102,6 @@ CGError_t print_point(CGPoint_t* point){
  * @param point pointer to CGPoint.
  * @param fp Pointer to file stream to print into.
  * @param desc_detail Flag specifying how much point information to print.
- * @return The appropriate error/success code.
  */
 void print_point_to_file(CGPoint_t* point, FILE* fp, CGDescDetail_t desc_detail){
     const char* function_name = "print_point_to_file";
@@ -127,9 +126,8 @@ void print_point_to_file(CGPoint_t* point, FILE* fp, CGDescDetail_t desc_detail)
  * Simple function for printing out values in point set directly to stdout.
  * @ingroup diagnostics
  * @param point_set Input set of points
- * @return The appropriate error code
  */
-CGError_t print_points(CGPointSet_t* point_set){
+void print_points(CGPointSet_t* point_set){
     print_points_to_file(point_set, stdout, CG_MIN);
 }
 
@@ -139,7 +137,6 @@ CGError_t print_points(CGPointSet_t* point_set){
  * @ingroup diagnostics
  * @param point_set Input set of points
  * @param fp File pointer of file in which to write
- * @return The appropriate error code
  */
 void print_points_to_file(CGPointSet_t* point_set, FILE* fp, CGDescDetail_t desc_detail){
     const char* function_name = "print_points_to_file";
