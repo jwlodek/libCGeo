@@ -42,8 +42,9 @@ FILE* output_test_file;
 void setup_convex_hull_test(void){
     input_test_file = fopen("/home/jwlodek/Documents/ProgrammingWorkspace/libCGeo/test/test_inputs/input_12pts.csv", "r");
     output_test_file = fopen("/home/jwlodek/Documents/ProgrammingWorkspace/libCGeo/test/test_outputs/output_12pts_CH.csv", "r");
-    point_set_A = init_point_set(12);
-    point_set_B = init_point_set(8);
+    point_set_A = init_point_set();
+    point_set_B = init_point_set();
+    point_set_C = init_point_set();
 }
 
 
@@ -57,9 +58,9 @@ void teardown_general(void){
 }
 
 Test(asserts, graham_scan_test_12pt, .init = setup_convex_hull_test, .fini = teardown_general){
-    CGError_t status_read_A = point_set_from_csv_file(point_set_A, input_test_file, CG_INT);
-    CGError_t status_read_B = point_set_from_csv_file(point_set_B, output_test_file, CG_INT);
-    CGPointSet_t* convex_hull = compute_graham_scan(point_set_A, CG_W_DEGENERACY);
+    CGError_t status_read_A = point_set_from_csv_file(point_set_A, input_test_file);
+    CGError_t status_read_B = point_set_from_csv_file(point_set_B, output_test_file);
+    CGPointSet_t* convex_hull = compute_graham_scan(point_set_A, point_set_C, CG_W_DEGENERACY);
     int compare = compare_point_sets(point_set_B, point_set_C);
     cr_assert(compare == 0, "Graham Scan not computed correctly");
 }
