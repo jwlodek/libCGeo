@@ -158,6 +158,7 @@ CGError_t       add_coords_to_set(CGPointSet_t* point_set, double xCoord, double
 CGError_t       add_point_to_set(CGPointSet_t* point_set, CGPoint_t* point);
 CGPoint_t*      get_point_at_index(CGPointSet_t* point_set, int index);
 CGError_t       free_point_set(CGPointSet_t* point_set);
+CGError_t       copy_point_set(CGPointSet_t* source, CGPointSet_t* destination);
 
 // reading / writing .csv files
 CGError_t       point_set_from_csv_file(CGPointSet_t* point_set, FILE* file_pointer);

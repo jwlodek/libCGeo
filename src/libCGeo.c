@@ -109,10 +109,11 @@ CGPoint_t* get_point_at_index(CGPointSet_t* point_set, int index){
  * @return INVALID INPUT error if set isnt allocated, or SUCCESS otherwise.
  */
 CGError_t free_point_set(CGPointSet_t* point_set){
+    CGError_t status = CG_SUCCESS;
     if(point_set == NULL)
         return CG_INVALID_INPUT;
-    else if(point_set->head == NULL || point_set->tail == NULL)
-        return CG_INVALID_INPUT;
+    else if(point_set->head == NULL || point_set->num_points == 0)
+        status = CG_POINTS_TOO_FEW;
     else{
         CGPointNode_t* current = point_set->head;
         while(current != NULL){
@@ -121,9 +122,9 @@ CGError_t free_point_set(CGPointSet_t* point_set){
             free(current);
             current = temp;
         }
-        free(point_set);
-        return CG_SUCCESS;
     }
+    free(point_set);
+    return status;
 }
 
 
@@ -341,10 +342,7 @@ CGError_t sort_points(CGPointNode_t** phead){
     sort_points(&left_list);
     sort_points(&right_list);
 
-    CGPointNode_t* temp = merge_halves(left_list, right_list);
-    if(temp == NULL)
-        return CG_INVALID_INPUT;
-    *phead = temp;
+    *phead = merge_halves(left_list, right_list);
     return CG_SUCCESS;
 }
 
@@ -366,7 +364,7 @@ void split_lists(CGPointNode_t* head, CGPointNode_t** left, CGPointNode_t** righ
     }
 
     *left = head;
-    *right = one_step;
+    *right = one_step->next;
     //detatch the lists
     one_step->next = NULL;
 }

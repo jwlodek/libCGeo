@@ -40,6 +40,7 @@ int main(int argc, char** argv){
     // initialize two empty point sets
     CGPointSet_t* point_set = init_point_set();
     CGPointSet_t* point_set_random = init_point_set();
+    CGPointSet_t* point_set_copy = init_point_set();
 
     // add points to the first set by coord
     add_coords_to_set(point_set, 0.0, 0.0);
@@ -62,7 +63,14 @@ int main(int argc, char** argv){
     CGError_t err = CG_INVALID_INPUT;
     print_cg_error(err, "print_points");
 
+    // copy the point set
+    copy_point_set(point_set, point_set_copy);
+
     // free the point set
     free_point_set(point_set);
+
+    printf("Here we print points copied from set that has already been freed.\n");
+    print_points(point_set_copy);
     free_point_set(point_set_random);
+    free_point_set(point_set_copy);
 }

@@ -81,6 +81,7 @@ int main(int argc, char** argv){
             current_node->point->sort_val = distance_between(current_node->point, lowest);
             // Note that it is necessary to set the sort_val_desc value: if it is NULL, sorting will fail.
             current_node->point->sort_val_desc = "Distance to lowest point";
+            current_node = current_node->next;
         }
 
         fprintf(stdout, "Points with sort values are:\n");
