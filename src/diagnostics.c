@@ -153,7 +153,7 @@ void print_points_to_file(CGPointSet_t* point_set, FILE* fp, CGDescDetail_t desc
         print_cg_error(CG_POINTS_TOO_FEW, function_name);
     else{
         CGPointNode_t* current_node = point_set->head;
-        while(current_node->next != NULL){
+        while(current_node != NULL){
             print_point_to_file(current_node->point, fp, desc_detail);
             current_node = current_node->next;
         }
@@ -179,9 +179,9 @@ CGError_t generate_random_point_set(CGPointSet_t* point_set, int num_points){
     int i;
     srand(time(NULL));
     for(i = 0; i < num_points; i++){
-        int xcoord = ((int) rand()/RAND_MAX*2.0 - 1.0) * 100.0;
-        int ycoord = ((int) rand()/RAND_MAX*2.0 - 1.0) * 100.0;
-        add_coords_to_set(point_set, (double) xcoord, (double) ycoord);
+        int xcoord = ((int) rand() % 200) - 100.0;
+        int ycoord = ((int) rand() % 200) - 100.0;
+        add_coords_to_set(point_set, xcoord, ycoord);
     }
     return CG_SUCCESS;
 }

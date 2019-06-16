@@ -47,7 +47,7 @@
 #define FLOAT_TOLERANCE 0.000001
 
 // Message to print at start of examples
-#define INTRO_MESSAGE   "+------------------------------\n+ Welcome to libCGeo examples\n+ Author: Jakub Wlodek\n+ Created: 2019\n+ Licence: MIT\n+------------------------------\n"
+#define INTRO_MESSAGE   "+------------------------------\n+ Welcome to libCGeo examples\n+ Author:\tJakub Wlodek\n+ Created:\t2019\n+ Licence:\tMIT\n+------------------------------\n"
 
 
 //----------------------------------------------------------------

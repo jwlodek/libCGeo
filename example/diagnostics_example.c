@@ -35,7 +35,7 @@ int main(int argc, char** argv){
 
     //initialize the point set
     printf(INTRO_MESSAGE);
-    printf("\nlibCGeo diagnostics example program.\n");
+    printf("\nlibCGeo diagnostics example program.\n\n");
 
     // initialize two empty point sets
     CGPointSet_t* point_set = init_point_set();
