@@ -28,6 +28,7 @@ set(libCGeo_URL "https://github.com/jwlodek/libCGeo")
 
 include(GNUInstallDirs)
 
+
 set(INSTALL_CMAKE_DIR "${libCGeo_SOURCE_DIR}/lib/cmake/libCGeo" CACHE PATH
     "Installation dir for CMake files")
 

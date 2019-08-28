@@ -34,6 +34,7 @@
 
 
 // libCGeo includes
+#include "csplit.h"
 #include "libCGeo/libCGeo.h"
 
 // Maximum number of characters read per line in .csv files
@@ -175,13 +176,16 @@ CGError_t point_set_from_csv_file(CGPointSet_t* point_set, FILE* file){
 
     while(fgets(buffer, LINE_BUFFER, file) != NULL){
         if(strlen(buffer) > 0){
-            char* xstr = strtok(buffer, ",");
-            double xcoord = atof(xstr);
-            char* ystr = strtok(NULL, "\n");
-            if(ystr == NULL)
-                ystr = strtok(NULL, EOF);
-            double ycoord = atof(ystr);
-            add_coords_to_set(point_set, xcoord, ycoord);
+            CSplitList_t* list = csplit_init_list();
+            char* temp = csplit_strip(buffer);
+            CSplitError_t err = csplit(list, temp, ",");
+            free(temp);
+            if(err == CSPLIT_SUCCESS && list->num_elems == 2){
+                double xcoord = atof(list->head->text);
+                double ycoord = atof(list->tail->text);
+                add_coords_to_set(point_set, xcoord, ycoord);
+            }
+            csplit_clear_list(list);
         }
     }
     return status;
